@@ -38,6 +38,10 @@ jobs:
     deploy-stage:
         <<: *defaults
         steps:
+            - aws-cli/setup:
+                  aws-access-key-id: AWS_ACCESS_KEY_ID
+                  aws-region: AWS_REGION
+                  aws-secret-access-key: AWS_SECRET_ACCESS_KEY
             - aws-ecs/run-task:
                   awsvpc: false
                   cluster: arn:aws:ecs:ap-northeast-2:195592554540:cluster/kormelon
