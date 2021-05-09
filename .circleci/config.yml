@@ -45,7 +45,7 @@ jobs:
             - aws-ecs/run-task:
                   subnet-ids: subnet-09676d4a9f9a0f016,subnet-00fec0f08d35725da
                   security-group-ids: sg-0771cbc8099026720
-                  cluster: kormelon
+                  cluster: arn:aws:ecs:ap-northeast-2:195592554540:cluster/kormelon
                   launch-type: EC2
                   task-definition: kormelon-back
 
