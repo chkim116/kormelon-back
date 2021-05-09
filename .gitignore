@@ -1,0 +1,13 @@
+node_modules
+client
+
+.env
+middleware
+
+routes
+
+/dist
+
+myblog.pem
+
+yarn-error.log
