@@ -46,7 +46,7 @@ jobs:
                   awsvpc: false
                   cluster: arn:aws:ecs:ap-northeast-2:195592554540:cluster/kormelon
                   launch-type: EC2
-                  task-definition: kormelon
+                  task-definition: kormelon-back
 
 workflows:
     version: 2
