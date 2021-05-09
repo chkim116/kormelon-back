@@ -19,17 +19,17 @@ jobs:
                   command: |
                       yarn install
             - restore_cache:
-                  name: Restore Next.js build cache
-                  key: next-cache-{{ checksum "yarn.lock" }}
+                  name: Restore build cache
+                  key: build-cache-{{ checksum "yarn.lock" }}
             - run:
-                  name: Build Next.js
+                  name: Build
                   command: |
                       yarn build
             - save_cache:
-                  name: Cache Next.js build
-                  key: next-cache-{{ checksum "yarn.lock" }}
+                  name: Cache build
+                  key: build-cache-{{ checksum "yarn.lock" }}
                   paths:
-                      - .next/cache
+                      - ./dist
             - persist_to_workspace:
                   root: .
                   paths:
