@@ -44,7 +44,7 @@ jobs:
                   aws-secret-access-key: AWS_SECRET_ACCESS_KEY
             - aws-ecs/run-task:
                   awsvpc: false
-                  cluster: arn:aws:ecs:ap-northeast-2:195592554540:cluster/kormelo
+                  cluster: arn:aws:ecs:ap-northeast-2:195592554540:cluster/kormelon
                   launch-type: EC2
                   task-definition: kormelon-back
 
