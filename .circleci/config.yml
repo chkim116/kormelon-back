@@ -1,0 +1,65 @@
+version: 2.1
+
+orbs:
+    aws-cli: circleci/aws-cli@1.4.0
+    aws-ecs: circleci/aws-ecs@2.2.1
+
+defaults: &defaults
+    docker:
+        - image: "cimg/python:3.9.1"
+
+jobs:
+    build-stage:
+        docker:
+            - image: circleci/node:lts
+        steps:
+            - checkout
+            - run:
+                  name: install
+                  command: |
+                      yarn install
+            - restore_cache:
+                  name: Restore Next.js build cache
+                  key: next-cache-{{ checksum "yarn.lock" }}
+            - run:
+                  name: Build Next.js
+                  command: |
+                      yarn build
+            - save_cache:
+                  name: Cache Next.js build
+                  key: next-cache-{{ checksum "yarn.lock" }}
+                  paths:
+                      - .next/cache
+            - persist_to_workspace:
+                  root: .
+                  paths:
+                      - .
+
+    deploy-stage:
+        <<: *defaults
+        steps:
+            - aws-ecs/run-task:
+                  awsvpc: false
+                  cluster: arn:aws:ecs:ap-northeast-2:195592554540:cluster/kormelon
+                  launch-type: EC2
+                  task-definition: myblog
+
+workflows:
+    version: 2
+    build-deploy:
+        jobs:
+            - build-stage:
+                  filters:
+                      branches:
+                          only:
+                              - circleci
+                  context: kormelon
+
+            - deploy-stage:
+                  requires:
+                      - build-stage
+                  filters:
+                      branches:
+                          only:
+                              - circleci
+                  context: kormelon
