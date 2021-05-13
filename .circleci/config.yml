@@ -42,6 +42,8 @@ workflows:
                   context: kormelon
 
             - deploy-to-eb:
+                  requires:
+                      - build-deploy
                   filters:
                       branches:
                           only:
