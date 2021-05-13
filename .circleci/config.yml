@@ -9,8 +9,8 @@ jobs:
             - checkout
             - node/with-cache:
                   steps:
-                      - run: npm install
-                      - run: npm test
+                      - run: yarn install
+                      - run: yarn build
                       - run:
                             name: Installing deployment dependencies
                             command: |
@@ -20,7 +20,7 @@ jobs:
                                 sudo pip install awsebcli --upgrade
                       - run:
                             name: Deploying
-                            command: eb deploy <Your AWS Environment Name>
+                            command: eb deploy kormelonapi-env
 
 workflows:
     version: 2
