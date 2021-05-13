@@ -3,6 +3,7 @@ version: 2.1
 orbs:
     node: circleci/node@1.1
     aws-cli: circleci/aws-cli@1.4.0
+    aws-ebcli: circleci/aws-elastic-beanstalk@1.0.2
 
 defaults: &defaults
     docker:
@@ -27,8 +28,11 @@ jobs:
                   aws-region: AWS_REGION
                   aws-secret-access-key: AWS_SECRET_ACCESS_KEY
             - run:
-                  name: Deploying
-                  command: eb deploy kormelonapi-env
+                  name: "Deploy to Elastic Beanstalk"
+                  command: |
+                      yarn generate-eb-zip
+                      eb init kormelon-api --keyname "Koremelonapi-env" --platform "Node.js 14" --region "ap-northeast-2"
+                      eb deploy Kormelonapi-env
 
 workflows:
     version: 2
