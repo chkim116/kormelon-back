@@ -1,67 +1,32 @@
 version: 2.1
-
 orbs:
-    aws-cli: circleci/aws-cli@1.4.0
-    aws-ecs: circleci/aws-ecs@2.2.1
-
-defaults: &defaults
-    docker:
-        - image: "cimg/python:3.9.1"
-
+    node: circleci/node@1.1
 jobs:
-    build-stage:
-        docker:
-            - image: circleci/node:lts
+    build-and-test:
+        executor:
+            name: node/default
         steps:
             - checkout
-            - run:
-                  name: install
-                  command: |
-                      yarn install
-            - restore_cache:
-                  name: Restore build cache
-                  key: build-cache-{{ checksum "yarn.lock" }}
-            - run:
-                  name: Build
-                  command: |
-                      yarn build
-            - save_cache:
-                  name: Cache build
-                  key: build-cache-{{ checksum "yarn.lock" }}
-                  paths:
-                      - ./dist
-            - persist_to_workspace:
-                  root: .
-                  paths:
-                      - .
-
-    deploy-stage:
-        <<: *defaults
-        steps:
-            - aws-cli/setup:
-                  aws-access-key-id: AWS_ACCESS_KEY_ID
-                  aws-region: AWS_REGION
-                  aws-secret-access-key: AWS_SECRET_ACCESS_KEY
-            - aws-ecs/run-task:
-                  awsvpc: false
-                  cluster: arn:aws:ecs:ap-northeast-2:195592554540:cluster/kormelon
-                  launch-type: EC2
-                  task-definition: kormelon-back
+            - node/with-cache:
+                  steps:
+                      - run: npm install
+                      - run: npm test
+                      - run:
+                            name: Installing deployment dependencies
+                            command: |
+                                sudo apt-get -y -qq update
+                                sudo apt-get install python-pip python-dev build-essential
+                                sudo pip install --upgrade setuptools
+                                sudo pip install awsebcli --upgrade
+                      - run:
+                            name: Deploying
+                            command: eb deploy <Your AWS Environment Name>
 
 workflows:
     version: 2
     build-deploy:
         jobs:
             - build-stage:
-                  filters:
-                      branches:
-                          only:
-                              - circleci
-                  context: kormelon
-
-            - deploy-stage:
-                  requires:
-                      - build-stage
                   filters:
                       branches:
                           only:
