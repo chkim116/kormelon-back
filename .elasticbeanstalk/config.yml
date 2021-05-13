@@ -1,0 +1,2 @@
+deploy:
+    artifact: dev/kormelon-api.zip

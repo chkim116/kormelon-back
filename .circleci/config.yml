@@ -29,6 +29,7 @@ jobs:
                   install-yarn: true
             - attach_workspace:
                   at: .
+            - aws-ebcli/setup
             - aws-cli/setup:
                   aws-access-key-id: AWS_ACCESS_KEY_ID
                   aws-region: AWS_REGION
