@@ -1,6 +1,10 @@
 version: 2.1
 orbs:
     node: circleci/node@1.1
+
+defaults: &defaults
+    docker:
+        - image: "cimg/python:3.9.1"
 jobs:
     build-deploy:
         executor:
@@ -11,22 +15,33 @@ jobs:
                   steps:
                       - run: yarn install
                       - run: yarn build
-                      - run:
-                            name: Installing deployment dependencies
-                            command: |
-                                sudo apt-get -y -qq update
-                                sudo apt-get install python-pip python-dev build-essential
-                                sudo pip install --upgrade setuptools
-                                sudo pip install awsebcli --upgrade
-                      - run:
-                            name: Deploying
-                            command: eb deploy kormelonapi-env
+
+        deploy-to-eb:
+            <<: *defaults
+            steps:
+                - run:
+                      name: Installing deployment dependencies
+                      command: |
+                          sudo apt-get -y -qq update
+                          sudo apt-get install python-pip python-dev build-essential
+                          sudo pip install --upgrade setuptools
+                          sudo pip install awsebcli --upgrade
+                - run:
+                      name: Deploying
+                      command: eb deploy kormelonapi-env
 
 workflows:
     version: 2
     build-deploy:
         jobs:
             - build-deploy:
+                  filters:
+                      branches:
+                          only:
+                              - circleci
+                  context: kormelon
+
+            - deploy-to-eb:
                   filters:
                       branches:
                           only:
