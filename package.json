@@ -11,7 +11,7 @@
         "start": "cross-env NODE_ENV=production pm2 start dist/index.js",
         "dev": "nodemon --exec ts-node index.ts",
         "build": "tsc",
-        "prestart": "npm install && npm build",
+        "prestart": "npm install && npm run build",
         "generate-eb-zip": "sh ./scripts/eb-zip.sh"
     },
     "author": "",
