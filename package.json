@@ -9,7 +9,7 @@
     "scripts": {
         "start": "cross-env NODE_ENV=production node ./dist/index.js",
         "dev": "nodemon --exec ts-node index.ts",
-        "build": "npm install -g tsx && tsc",
+        "build": "npm install -g tsc && tsc",
         "generate-eb-zip": "sh ./scripts/eb-zip.sh"
     },
     "author": "",
