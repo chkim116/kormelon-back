@@ -9,7 +9,7 @@
     "scripts": {
         "start": "cross-env NODE_ENV=production pm2 start dist/index.js",
         "dev": "nodemon --exec ts-node index.ts",
-        "build": "tsc",
+        "build": "npx tsc",
         "prestart": "npm run build",
         "generate-eb-zip": "sh ./scripts/eb-zip.sh"
     },
