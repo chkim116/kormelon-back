@@ -10,7 +10,6 @@
         "start": "cross-env NODE_ENV=production node ./dist/index.js",
         "dev": "nodemon --exec ts-node index.ts",
         "build": "tsc",
-        "prestart": "npm install -g tsc && npm run build",
         "generate-eb-zip": "sh ./scripts/eb-zip.sh"
     },
     "author": "",
