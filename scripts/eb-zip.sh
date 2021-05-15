@@ -3,7 +3,7 @@
 stat dev || mkdir dev
 
 # Archive artifacts
-zip dev/kormelon-api.zip -r ./
+zip dev/kormelon-api.zip -r ./ -x "*.git/*"
 
 # Setup eb config
 mkdir .elasticbeanstalk

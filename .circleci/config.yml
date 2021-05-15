@@ -10,22 +10,16 @@ defaults: &defaults
         - image: "cimg/python:3.9.1"
 
 jobs:
-    build-deploy:
-        executor:
-            name: node/default
-        steps:
-            - checkout
-            - node/with-cache:
-                  steps:
-                      - run: yarn install
-
     deploy-to-eb:
         <<: *defaults
         steps:
             - checkout
             - node/install:
-                  node-version: "14.16.0"
+                  node-version: "14.15.4"
                   install-yarn: true
+            - node/with-cache:
+                  steps:
+                      - run: yarn install
             - attach_workspace:
                   at: .
             - aws-ebcli/setup
@@ -44,16 +38,7 @@ workflows:
     version: 2
     build-and-deploy:
         jobs:
-            - build-deploy:
-                  filters:
-                      branches:
-                          only:
-                              - circleci
-                  context: kormelon
-
             - deploy-to-eb:
-                  requires:
-                      - build-deploy
                   filters:
                       branches:
                           only:
