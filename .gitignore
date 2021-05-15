@@ -8,6 +8,6 @@ routes
 
 /dist
 
-myblog.pem
+kormelon-api.pem
 
 yarn-error.log

@@ -61,6 +61,10 @@ app.get("/", (req, res) => {
     res.send("welcome to my blog server")
 })
 
+app.get("/check", (req, res) => {
+    res.send("welcome to my blog server!!")
+})
+
 // 자정마다 조회수 초기화 및 토탈 추가
 const views = schedule.scheduleJob("0 0 0 * * *", totalView as any)
 

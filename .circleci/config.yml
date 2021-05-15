@@ -1,0 +1,47 @@
+version: 2.1
+
+orbs:
+    node: circleci/node@1.1
+    aws-cli: circleci/aws-cli@1.4.0
+    aws-ebcli: circleci/aws-elastic-beanstalk@1.0.2
+
+defaults: &defaults
+    docker:
+        - image: "cimg/python:3.9.1"
+
+jobs:
+    deploy-to-eb:
+        <<: *defaults
+        steps:
+            - checkout
+            - node/install:
+                  node-version: "14.15.4"
+                  install-yarn: true
+            - node/with-cache:
+                  steps:
+                      - run: yarn install
+                      - run: yarn build
+            - attach_workspace:
+                  at: .
+            - aws-ebcli/setup
+            - aws-cli/setup:
+                  aws-access-key-id: AWS_ACCESS_KEY_ID
+                  aws-region: AWS_REGION
+                  aws-secret-access-key: AWS_SECRET_ACCESS_KEY
+            - run:
+                  name: "Deploy to Elastic Beanstalk"
+                  command: |
+                      yarn generate-eb-zip
+                      eb init kormelon-api --keyname "Koremelonapi-env" --platform "Node.js 14" --region "ap-northeast-2"
+                      eb deploy Kormelonapi-env
+
+workflows:
+    version: 2
+    build-and-deploy:
+        jobs:
+            - deploy-to-eb:
+                  filters:
+                      branches:
+                          only:
+                              - circleci
+                  context: kormelon

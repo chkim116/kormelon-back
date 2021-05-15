@@ -15,7 +15,7 @@ const multerImg = multer({
     storage: multerS3({
         s3,
         acl: "public-read",
-        bucket: "kormelon.cf/myblog",
+        bucket: "assets-kormelon/img",
     }),
 })
 

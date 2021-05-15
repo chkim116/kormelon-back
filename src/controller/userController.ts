@@ -7,15 +7,16 @@ import dotenv from "dotenv"
 import { CookieOptions, NextFunction, Request, Response } from "express"
 dotenv.config()
 
+const isProd = process.env.NODE_ENV === "production"
+
 const options = (login: boolean) => {
     const option: CookieOptions = {
         maxAge: login ? 1000 * 60 * 60 * 24 * 7 : 0,
         path: "/",
-        domain:
-            process.env.NODE_ENV === "production" ? ".kormelon.cf" : undefined,
-        httpOnly: process.env.NODE_ENV === "production",
-        secure: process.env.NODE_ENV === "production",
-        sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+        domain: isProd ? ".kormelon.com" : undefined,
+        httpOnly: isProd,
+        secure: isProd,
+        sameSite: isProd ? "none" : "lax",
     }
     return option
 }
