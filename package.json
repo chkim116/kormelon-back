@@ -7,10 +7,9 @@
         "node": "14.15.4"
     },
     "scripts": {
-        "start": "cross-env NODE_ENV=production pm2 start dist/index.js",
+        "start": "cross-env NODE_ENV=production ts-node index.ts",
         "dev": "nodemon --exec ts-node index.ts",
-        "build": "npx tsc",
-        "prestart": "npm run build",
+        "build": "tsc",
         "generate-eb-zip": "sh ./scripts/eb-zip.sh"
     },
     "author": "",
