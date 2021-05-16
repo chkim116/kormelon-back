@@ -5,7 +5,6 @@ import {
     getPostById,
     postEditing,
     postDeleting,
-    getAllPost,
     postComments,
     delComments,
     postImg,
@@ -19,8 +18,6 @@ const postRouter = express.Router()
 
 // post get ALL!
 postRouter.get("/", getPost)
-
-postRouter.get("/all", getAllPost)
 
 // post get by ID
 postRouter.get("/:title", getPostById)

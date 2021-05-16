@@ -29,17 +29,6 @@ export const getPost = async (req: Request, res: Response) => {
     }
 }
 
-export const getAllPost = async (req: Request, res: Response) => {
-    try {
-        const post = await Post.find({}).sort({ _id: -1 })
-        const postTitleList = post.map((list) => ({ title: list.title }))
-
-        res.json({ postTitleList })
-    } catch (error) {
-        console.error(error)
-    }
-}
-
 export const postPosting = async (req: Request, res: Response) => {
     const {
         body: {
@@ -89,14 +78,8 @@ export const getPostById = async (req: Request, res: Response) => {
 
 export const postEditing = async (req: Request, res: Response) => {
     const { id } = req.params
-    const {
-        title,
-        preview,
-        description,
-        updated,
-        tags,
-        category,
-    }: PostType = req.body
+    const { title, preview, description, updated, tags, category }: PostType =
+        req.body
     try {
         const post = await Post.findOneAndUpdate(
             { _id: id },
