@@ -6,8 +6,8 @@ import dotenv from "dotenv"
 dotenv.config()
 
 const s3 = new aws.S3({
-    secretAccessKey: process.env.AMAZONE_PASSWORD,
-    accessKeyId: process.env.AMAZONE_ACCESS_KEY,
+    secretAccessKey: process.env.AMAZONE_PASSWORD || "",
+    accessKeyId: process.env.AMAZONE_ACCESS_KEY || "",
     region: "ap-northeast-2",
 })
 
@@ -16,6 +16,9 @@ const multerImg = multer({
         s3,
         acl: "public-read",
         bucket: "assets-kormelon/img",
+        key: function (req, file, cb) {
+            cb(null, file.originalname) // 이름 설정
+        },
     }),
 })
 
