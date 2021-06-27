@@ -71,7 +71,7 @@ export const postRegister = async (
 
 export const postlogin = (req: Request, res: Response, next: NextFunction) => {
     passport.authenticate("local", (err, user, info) => {
-        if (err) return res.send("message: error")
+        if (err) return res.send({ message: err })
         if (!user) {
             res.status(400).send({
                 message: "아이디나 비밀번호를 다시 입력해 주세요.",
@@ -86,19 +86,15 @@ export const postlogin = (req: Request, res: Response, next: NextFunction) => {
                     { userID: user._id },
                     process.env.JWT_SECRET as string
                 )
-                user.token = token
                 user.save((err: any, user: UserType) => {
                     if (err) {
                         return res.status(400).json(err)
                     }
-                    return res
-                        .cookie("x_auth", user.token, options(true))
-                        .status(200)
-                        .json({
-                            id: user._id,
-                            username: user.username,
-                            token: user.token,
-                        })
+                    return res.cookie("x_auth", token).status(200).send({
+                        id: user._id,
+                        username: user.username,
+                        token: user.token,
+                    })
                 })
             })
         }
