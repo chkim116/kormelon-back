@@ -90,11 +90,14 @@ export const postlogin = (req: Request, res: Response, next: NextFunction) => {
                     if (err) {
                         return res.status(400).json(err)
                     }
-                    return res.cookie("x_auth", token).status(200).send({
-                        id: user._id,
-                        username: user.username,
-                        token: user.token,
-                    })
+                    return res
+                        .cookie("x_auth", token, options(true))
+                        .status(200)
+                        .send({
+                            id: user._id,
+                            username: user.username,
+                            token: user.token,
+                        })
                 })
             })
         }
