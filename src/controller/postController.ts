@@ -67,9 +67,12 @@ export const postPosting = async (req: Request, res: Response) => {
 
 export const getPostById = async (req: Request, res: Response) => {
     const { title } = req.params
-    console.log(title)
+
     try {
         const postByTitle = await Post.findOne({ title: decodeURI(title) })
+        if (postByTitle) {
+            postByTitle.views = postByTitle.views++
+        }
         res.status(200).json(postByTitle)
     } catch (err) {
         console.error(err)
@@ -157,6 +160,6 @@ export const postImg = (req: Request, res: Response) => {
         res.status(200).json(location)
     } catch (err) {
         console.error(err)
-        res.status(400).json(err.message)
+        res.status(400).json(err)
     }
 }
