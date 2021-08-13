@@ -71,7 +71,7 @@ export const getPostById = async (req: Request, res: Response) => {
     try {
         const postByTitle = await Post.findOne({ title: decodeURI(title) })
         if (postByTitle) {
-            postByTitle.views = postByTitle.views++
+            postByTitle.views++
         }
         res.status(200).json(postByTitle)
     } catch (err) {
