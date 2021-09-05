@@ -8,13 +8,15 @@ import {
     postComments,
     delComments,
     postImg,
+    getAllTitle,
 } from "../controller/postController"
 import { auth } from "../controller/userController"
 import { uploadImage } from "../../multer"
 
 const postRouter = express.Router()
 
-// /api/
+// /post/
+postRouter.get("/all", getAllTitle)
 
 // post get ALL!
 postRouter.get("/", getPost)

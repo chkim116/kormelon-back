@@ -4,6 +4,17 @@ import Post, { PostType } from "../models/post"
 import Comments from "../models/Comments"
 import { UserType } from "../models/User"
 
+export const getAllTitle = async (req: Request, res: Response) => {
+    try {
+        const post = await Post.find()
+
+        const postTitleList = post.map((lst) => lst.title)
+        res.json({ postTitleList })
+    } catch (error) {
+        console.error(error)
+    }
+}
+
 export const getPost = async (req: Request, res: Response) => {
     const { filter, page }: any = req.query
     const pageNumber = parseInt(page || "1")
