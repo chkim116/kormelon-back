@@ -4,6 +4,7 @@ import { CommentType } from "./Comments"
 export interface PostType extends Document {
     _id?: string
     title: string
+    thumb: string
     views: number
     preview: string
     description: string
@@ -21,6 +22,9 @@ const PostSchema = new mongoose.Schema({
         required: "title is required",
     },
     preview: {
+        type: String,
+    },
+    thumb: {
         type: String,
     },
     views: {

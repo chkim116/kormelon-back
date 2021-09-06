@@ -45,6 +45,7 @@ export const postPosting = async (req: Request, res: Response) => {
         body: {
             title,
             preview,
+            thumb,
             description,
             updated,
             createDate,
@@ -56,6 +57,7 @@ export const postPosting = async (req: Request, res: Response) => {
     try {
         const post = await Post.create({
             title,
+            thumb,
             preview,
             description,
             updated,
@@ -82,7 +84,9 @@ export const getPostById = async (req: Request, res: Response) => {
     try {
         const postByTitle = await Post.findOne({ title: decodeURI(title) })
         if (postByTitle) {
-            postByTitle.views++
+            const view = postByTitle.views + 1
+            postByTitle.views = view
+            postByTitle.save()
         }
         res.status(200).json(postByTitle)
     } catch (err) {
@@ -92,12 +96,19 @@ export const getPostById = async (req: Request, res: Response) => {
 
 export const postEditing = async (req: Request, res: Response) => {
     const { id } = req.params
-    const { title, preview, description, updated, tags, category }: PostType =
-        req.body
+    const {
+        title,
+        preview,
+        description,
+        updated,
+        tags,
+        category,
+        thumb,
+    }: PostType = req.body
     try {
         const post = await Post.findOneAndUpdate(
             { _id: id },
-            { title, preview, description, updated, tags, category }
+            { title, preview, description, updated, tags, category, thumb }
         )
         res.status(200).json(post)
     } catch (err) {
