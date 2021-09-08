@@ -100,10 +100,10 @@ export const getPostById = async (req: Request, res: Response) => {
             await postByTitle.save()
         }
         const next = nextPost
-            ? { id: nextPost?._id, title: nextPost?.title }
+            ? { id: nextPost?._id, title: encodeURI(nextPost.title) }
             : null
         const prev = prevPost
-            ? { id: prevPost?._id, title: prevPost?.title }
+            ? { id: prevPost?._id, title: encodeURI(prevPost?.title) }
             : null
         res.status(200).json({ postByTitle, next, prev })
     } catch (err) {
