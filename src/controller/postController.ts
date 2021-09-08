@@ -83,12 +83,29 @@ export const getPostById = async (req: Request, res: Response) => {
 
     try {
         const postByTitle = await Post.findOne({ title: decodeURI(title) })
+        const nextPost = await Post.findOne({
+            _id: { $gt: postByTitle?._id },
+        })
+            .sort({ _id: 1 })
+            .limit(1)
+        const prevPost = await Post.findOne({
+            _id: { $lt: postByTitle?._id },
+        })
+            .sort({ _id: -1 })
+            .limit(1)
+
         if (postByTitle) {
             const view = postByTitle.views + 1
             postByTitle.views = view
-            postByTitle.save()
+            await postByTitle.save()
         }
-        res.status(200).json(postByTitle)
+        const next = nextPost
+            ? { id: nextPost?._id, title: nextPost?.title }
+            : null
+        const prev = prevPost
+            ? { id: prevPost?._id, title: prevPost?.title }
+            : null
+        res.status(200).json({ postByTitle, next, prev })
     } catch (err) {
         console.error(err)
     }
