@@ -43,7 +43,12 @@ export const getSearchingTags = async (req: Request, res: Response) => {
             }).sort({ _id: -1 })
         }
         if (select === "title") {
-            post = await Post.find({ title: { $regex: text as string } }).sort({
+            post = await Post.find({
+                $or: [
+                    { title: { $regex: text as string } },
+                    { description: { $regex: text as string } },
+                ],
+            }).sort({
                 _id: -1,
             })
         }
