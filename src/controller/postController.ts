@@ -82,8 +82,7 @@ export const postPosting = async (req: Request, res: Response) => {
 
 export const getPostById = async (req: Request, res: Response) => {
     const { title } = req.params;
-    const token = req.cookies;
-    console.log(token, req.user);
+    const isMe = req.cookies.x_auth;
 
     try {
         const postByTitle = await Post.findOne({
@@ -100,7 +99,7 @@ export const getPostById = async (req: Request, res: Response) => {
             .sort({ _id: -1 })
             .limit(1);
 
-        if (postByTitle) {
+        if (postByTitle && !isMe) {
             const view = postByTitle.views + 1;
             postByTitle.views = view;
             await postByTitle.save();

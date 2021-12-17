@@ -1,68 +1,72 @@
-import requestIp from "request-ip"
-import Home from "../models/Home"
-import { NextFunction, Request, Response } from "express"
+import requestIp from "request-ip";
+import Home from "../models/Home";
+import { NextFunction, Request, Response } from "express";
 
 export const getView = async (
     req: Request,
     res: Response,
     next: NextFunction
 ) => {
-    const home = await Home.find({})
+    const isMe = req.cookies.x_auth;
+    if (!isMe) {
+        return;
+    }
+    const home = await Home.find({});
 
     if (home.length >= 1) {
-        next()
-        return
+        next();
+        return;
     }
     await Home.create({
         views: 0,
         ip: [],
         totalView: 0,
-    })
-    next()
-}
+    });
+    next();
+};
 
 export const checkIp = async (
     req: Request,
     res: Response,
     next: NextFunction
 ) => {
-    const clientIp: string | null = requestIp.getClientIp(req)
-    const home = await Home.find({})
+    const clientIp: string | null = requestIp.getClientIp(req);
+    const home = await Home.find({});
     if (clientIp && home[0].ip.indexOf(clientIp) > -1) {
-        res.json(home[0])
-        return
+        res.json(home[0]);
+        return;
     } else {
-        next()
+        next();
     }
-}
+};
 
 export const checkView = async (req: Request, res: Response) => {
-    const clientIp: string | null = requestIp.getClientIp(req)
+    const clientIp: string | null = requestIp.getClientIp(req);
     try {
-        const home = await Home.find({})
+        const home = await Home.find({});
         if (clientIp && home) {
-            home[0].views += 1
-            home[0].ip.push(clientIp)
-            home[0].save()
-            res.status(200).json(home[0])
+            home[0].views += 1;
+            home[0].ip.push(clientIp);
+            home[0].save();
+            res.status(200).json(home[0]);
         } else {
-            res.status(400)
+            res.status(400);
         }
     } catch (err) {
-        res.status(400)
-        console.log(err)
+        res.status(400);
+        console.log(err);
     }
-}
+};
 
 // total view
 
 export const totalView = async (req: Request, res: Response) => {
-    const home = await Home.find({})
-    const { totalView, _id, views } = home[0]
+    const home = await Home.find({});
+    const { totalView, _id, views } = home[0];
     if (totalView) {
         await Home.findOneAndUpdate(
             { _id },
             { views: 0, totalView: totalView + views, ip: [] }
-        )
+        );
     }
-}
+};
