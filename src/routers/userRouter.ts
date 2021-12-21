@@ -23,7 +23,6 @@ userRouter.get("/", auth, async (req, res) => {
             id: user._id,
             username: user.username,
             admin: user.admin,
-            token: (req as any).token,
         });
     } else {
         res.status(400);
