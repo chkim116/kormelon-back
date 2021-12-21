@@ -7,10 +7,6 @@ export const getView = async (
     res: Response,
     next: NextFunction
 ) => {
-    const isMe = req.cookies.x_auth;
-    if (!isMe) {
-        return;
-    }
     const home = await Home.find({});
 
     if (home.length >= 1) {
@@ -44,6 +40,11 @@ export const checkView = async (req: Request, res: Response) => {
     const clientIp: string | null = requestIp.getClientIp(req);
     try {
         const home = await Home.find({});
+        const isMe = req.cookies.x_auth;
+        if (isMe) {
+            res.status(200).json(home[0]);
+            return;
+        }
         if (clientIp && home) {
             home[0].views += 1;
             home[0].ip.push(clientIp);
