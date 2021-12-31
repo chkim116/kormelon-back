@@ -40,7 +40,7 @@ app.use(
     cors({
         origin:
             process.env.NODE_ENV === "production"
-                ? "https://kormelon.com"
+                ? ["https://kormelon.com", "https://portfolio.kormelon.com"]
                 : "http://localhost:3000",
         credentials: true,
     })
