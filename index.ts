@@ -6,6 +6,7 @@ import cors from "cors";
 import dotenv from "dotenv";
 import helmet from "helmet";
 import schedule from "node-schedule";
+import nodeMail from "nodemailer";
 
 import "./db";
 dotenv.config();
@@ -64,8 +65,47 @@ app.get("/", (req, res) => {
     res.send("welcome to my blog server");
 });
 
-app.get("/check", (req, res) => {
-    res.send("welcome to my blog server!!");
+app.post("/mail", async (req, res) => {
+    const { name, email, message } = req.body;
+
+    // TODO: 구글 이메일 ..
+    function sendMessage() {
+        let transporter = nodeMail.createTransport({
+            service: "gmail",
+            host: "smtp.gmail.com",
+            port: 587,
+            secure: false,
+            auth: {
+                user: process.env.EMAIL,
+                pass: process.env.MAIL_PW,
+            },
+        });
+
+        let mailOptions = {
+            from: email,
+            to: process.env.EMAIL,
+            subject: "포트폴리오 사이트에서 온 전문입니다!",
+            html: `${name}님이 보내신 글 <br>  <br> email : ${email} <br> ${message} <br>`,
+        };
+
+        // 전송
+
+        transporter.sendMail(mailOptions, (error: any, info: any) => {
+            if (error) {
+                console.log(error);
+            }
+            console.log("Finish sending email : " + info.response);
+            transporter.close();
+        });
+    }
+
+    try {
+        await sendMessage();
+        res.sendStatus(200);
+    } catch (err) {
+        console.error(err);
+        res.sendStatus(400);
+    }
 });
 
 // 자정마다 조회수 초기화 및 토탈 추가

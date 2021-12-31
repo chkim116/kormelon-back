@@ -15,7 +15,7 @@ jobs:
         steps:
             - checkout
             - node/install:
-                  node-version: "14.15.4"
+                  node-version: "16.13.0"
                   install-yarn: true
             - node/with-cache:
                   steps:
