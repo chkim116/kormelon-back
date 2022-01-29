@@ -1,0 +1,4 @@
+- [x] typeorm [가이드](https://typeorm.io/#/)
+- [ ] MariaDB 연동
+- [ ] test 설정
+- [ ] ping pong API	
