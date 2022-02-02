@@ -1,15 +1,17 @@
 import request from 'supertest';
-import express from 'express';
+
 import { userRouter } from '../router/userRouter';
+import { dbClose, dbConnect, createTestServer } from './features';
 
 let server: request.SuperTest<request.Test>;
 
 beforeAll(() => {
-	const app = express();
-	app.use(express.json());
-	app.use(express.urlencoded({ extended: true }));
-	app.use('/user', userRouter);
-	server = request(app);
+	server = createTestServer('/user', userRouter);
+	dbConnect();
+});
+
+afterAll(() => {
+	dbClose();
 });
 
 describe('express test', () => {
