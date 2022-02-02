@@ -5,6 +5,7 @@ import helmet from 'helmet';
 import 'reflect-metadata';
 
 import dbCreateConnection from './typeorm/dbCreateConnection';
+import { userRouter } from './router/userRouter';
 
 const server = express();
 
@@ -14,6 +15,8 @@ server.use(morgan('combined'));
 
 server.use(express.json());
 server.use(express.urlencoded({ extended: true }));
+
+server.use('/user', userRouter);
 
 server.listen(4000, () => {
 	console.log('http://localhost:4000');
