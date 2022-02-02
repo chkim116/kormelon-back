@@ -7,7 +7,7 @@ const dbCreateConnection = async (): Promise<Connection | null> => {
 		await createConnection(config)
 			.then((connection) => {
 				console.log(
-					`DB connection success. ${connection.name}\n DB : ${connection.options.database}`
+					`DB connection success. \nDB: ${connection.options.database}`
 				);
 			})
 			.catch((err) => {
