@@ -11,7 +11,7 @@ const dbCreateConnection = async (): Promise<Connection | null> => {
 				);
 			})
 			.catch((err) => {
-				throw new Error(err);
+				console.log(err);
 			});
 	} catch (err) {
 		console.log(err);

@@ -32,6 +32,9 @@ export class Post {
 	@Column({ default: true })
 	is_private!: boolean;
 
+	@Column({ type: 'simple-array' })
+	tags!: Tag[];
+
 	@Column('timestamptz')
 	@CreateDateColumn()
 	created_at!: Date;
@@ -50,12 +53,4 @@ export class Post {
 	@ManyToOne(() => Category, (category) => category.posts)
 	@JoinColumn({ name: 'fk_category_id' })
 	category!: Category;
-
-	@ManyToMany(() => Tag, (tag) => tag.posts)
-	@JoinTable({
-		name: 'post_tags',
-		joinColumn: { name: 'fk_post_id' },
-		inverseJoinColumn: { name: 'fk_tag_id' },
-	})
-	tags!: Tag[];
 }

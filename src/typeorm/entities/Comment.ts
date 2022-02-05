@@ -21,7 +21,7 @@ export class Comment {
 	@Column({ default: false })
 	has_replies!: boolean;
 
-	@Column()
+	@Column({ type: 'simple-array' })
 	replie_comments!: Comment[];
 
 	@Column('timestamptz')

@@ -11,9 +11,9 @@ const config: ConnectionOptions = {
 	username: process.env.DB_DEV_USERNAME,
 	password: process.env.DB_DEV_PASSWORD,
 	database: process.env.DB_DEV_NAME,
-	synchronize: false,
+	synchronize: true,
 	logging: false,
-	entities: ['./entities/**/*.ts'],
+	entities: [__dirname + '**/entities/*.{js,ts}'],
 	migrations: ['./migrations/**/*.ts'],
 	subscribers: ['./subscriber/**/*.ts'],
 	cli: {

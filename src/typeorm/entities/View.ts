@@ -1,7 +1,10 @@
-import { Entity, Column } from 'typeorm';
+import { Entity, Column, PrimaryColumn } from 'typeorm';
 
 @Entity()
 export class View {
+	@PrimaryColumn({ default: 1 })
+	id!: string;
+
 	@Column()
 	today!: number;
 
