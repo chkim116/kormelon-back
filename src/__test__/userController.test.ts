@@ -10,22 +10,16 @@ beforeAll(async () => {
 });
 
 afterAll(async () => {
+	await dbClear();
 	await dbClose();
 });
 
-beforeEach(async () => {
-	await dbClear();
-});
+const mockUser = { email: 'abc@gmail.com', password: '123' };
 
 describe('User test', () => {
 	describe('POST /user/register', () => {
 		it('정상적인 회원가입', async () => {
-			const user = {
-				email: 'abcs@gmail.com',
-				password: '2',
-			};
-
-			const res = await server.post('/user/register').send(user);
+			const res = await server.post('/user/register').send(mockUser);
 			expect(res.status).toEqual(201);
 		});
 
@@ -63,6 +57,62 @@ describe('User test', () => {
 
 			expect(err.status).toEqual(400);
 			expect(err.body.message).toEqual('올바른 이메일 형식을 입력해 주세요.');
+		});
+	});
+
+	describe('POST /user/login', () => {
+		const postLogin = <T extends object>(data: T) =>
+			server.post('/user/login').send(data);
+
+		it('정상적인 로그인', async () => {
+			const res = await postLogin(mockUser);
+			expect(res.status).toEqual(200);
+			expect(res.body).toHaveProperty('id');
+			expect(res.body).toHaveProperty('username');
+			expect(res.body).toHaveProperty('email');
+			expect(res.body).toHaveProperty('isAdmin');
+			expect(res.header['set-cookie'].length).toBeTruthy();
+		});
+
+		it('비밀번호가 틀렸다.', async () => {
+			const err = await postLogin({ ...mockUser, password: 'a' });
+
+			expect(err.status).toEqual(401);
+			expect(err.body.message).toEqual('비밀번호가 틀립니다.');
+		});
+
+		it('존재하지 않은 유저이다.', async () => {
+			const err = await postLogin({
+				email: 'no@gmail.com',
+				password: 'b',
+			});
+
+			expect(err.status).toEqual(401);
+			expect(err.body.message).toEqual('존재하지 않는 유저입니다.');
+		});
+	});
+
+	describe('GET /user/auth', () => {
+		const login = () =>
+			server
+				.post('/user/login')
+				.send(mockUser)
+				.then((res) => res.header['set-cookie'][0]);
+
+		it('정상적인 권한 획득', async () => {
+			const token = await login();
+			const res = await server.get('/user/auth').set('Cookie', token);
+
+			expect(res.status).toEqual(200);
+			expect(res.body).toHaveProperty('id');
+			expect(res.body).toHaveProperty('username');
+			expect(res.body).toHaveProperty('email');
+			expect(res.body).toHaveProperty('isAdmin');
+		});
+
+		it('쿠키 포함이 되지 않은 요청 시', async () => {
+			const res = await server.get('/user/auth');
+			expect(res.body).toEqual(false);
 		});
 	});
 });

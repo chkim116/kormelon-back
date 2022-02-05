@@ -1,9 +1,11 @@
 import request from 'supertest';
 import express, { Router } from 'express';
+import cookieParser from 'cookie-parser';
 
 export const createTestServer = (route?: string, router?: Router) => {
 	const app = express();
 
+	app.use(cookieParser());
 	app.use(express.json());
 	app.use(express.urlencoded({ extended: true }));
 
