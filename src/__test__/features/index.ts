@@ -1,4 +1,4 @@
 import { createTestServer } from './createTestServer';
-import { dbClose, dbConnect } from './dbConnect';
+import { dbClear, dbClose, dbConnect } from './dbConnect';
 
-export { createTestServer, dbConnect, dbClose };
+export { createTestServer, dbConnect, dbClose, dbClear };
