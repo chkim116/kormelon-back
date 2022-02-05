@@ -26,7 +26,7 @@ export class Post {
 	@Column()
 	content!: string;
 
-	@Column()
+	@Column({ default: 0 })
 	view!: number;
 
 	@Column({ default: true })

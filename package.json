@@ -4,7 +4,7 @@
 	"description": "K-Blog(가명) 서버",
 	"main": "index.js",
 	"scripts": {
-		"test": "jest --setupFiles dotenv/config --forceExit --detectOpenHandles",
+		"test": "jest --forceExit --detectOpenHandles",
 		"dev": "nodemon"
 	},
 	"dependencies": {

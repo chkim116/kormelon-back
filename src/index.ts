@@ -7,6 +7,7 @@ import cookieParser from 'cookie-parser';
 
 import dbCreateConnection from './typeorm/dbCreateConnection';
 import { userRouter } from './router/userRouter';
+import { postRouter } from './router/postRouter';
 
 const server = express();
 
@@ -19,6 +20,7 @@ server.use(express.json());
 server.use(express.urlencoded({ extended: true }));
 
 server.use('/user', userRouter);
+server.use('/post', postRouter);
 
 server.listen(4000, () => {
 	console.log('http://localhost:4000');
