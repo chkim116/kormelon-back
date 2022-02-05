@@ -6,8 +6,8 @@ import {
 	UpdateDateColumn,
 	ManyToOne,
 	OneToMany,
-	ManyToMany,
 	JoinColumn,
+	ManyToMany,
 	JoinTable,
 } from 'typeorm';
 import { Category } from './Category';
@@ -32,9 +32,6 @@ export class Post {
 	@Column({ default: true })
 	is_private!: boolean;
 
-	@Column({ type: 'simple-array' })
-	tags!: Tag[];
-
 	@Column('timestamptz')
 	@CreateDateColumn()
 	created_at!: Date;
@@ -44,13 +41,17 @@ export class Post {
 	updated_at!: Date;
 
 	@ManyToOne(() => User, (user) => user.posts)
-	@JoinColumn({ name: 'fk_user_id' })
+	@JoinColumn()
 	user!: User;
 
 	@OneToMany(() => Comment, (comment) => comment.posts)
 	comments!: Comment[];
 
 	@ManyToOne(() => Category, (category) => category.posts)
-	@JoinColumn({ name: 'fk_category_id' })
+	@JoinColumn()
 	category!: Category;
+
+	@ManyToMany(() => Tag, (tag) => tag.posts)
+	@JoinTable()
+	tags!: Tag[];
 }
