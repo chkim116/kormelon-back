@@ -1,4 +1,11 @@
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import {
+	Column,
+	CreateDateColumn,
+	Entity,
+	OneToMany,
+	PrimaryGeneratedColumn,
+	UpdateDateColumn,
+} from 'typeorm';
 import { Comment } from './Comment';
 import { Post } from './Post';
 
@@ -18,6 +25,14 @@ export class User {
 
 	@Column({ default: false })
 	is_admin!: boolean;
+
+	@Column('timestamptz')
+	@CreateDateColumn()
+	created_at!: Date;
+
+	@Column('timestamptz')
+	@UpdateDateColumn()
+	updated_at!: Date;
 
 	@OneToMany(() => Post, (post) => post.user)
 	posts!: Post[];

@@ -5,7 +5,7 @@ dotenv.config();
 
 const config: ConnectionOptions = {
 	type: 'mysql',
-	name: process.env.DB_DEV_NAME,
+	name: process.env.NODE_ENV,
 	host: process.env.DB_DEV_HOST,
 	port: Number(process.env.DB_DEV_PORT),
 	username: process.env.DB_DEV_USERNAME,
