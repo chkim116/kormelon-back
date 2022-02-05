@@ -111,8 +111,17 @@ describe('User test', () => {
 		});
 
 		it('쿠키 포함이 되지 않은 요청 시', async () => {
-			const res = await server.get('/user/auth');
-			expect(res.body).toEqual(false);
+			const err = await server.get('/user/auth');
+			expect(err.body).toEqual(false);
+		});
+	});
+
+	describe('POST /user/logout', () => {
+		const logout = () => server.post('/user/logout');
+		it('정상적인 로그아웃', async () => {
+			const res = await logout();
+
+			expect(res.status).toEqual(200);
 		});
 	});
 });

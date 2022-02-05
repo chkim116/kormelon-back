@@ -1,7 +1,12 @@
 import express from 'express';
 import { check } from 'express-validator';
 
-import { postRegister, postLogin, getAuth } from '../controller/userController';
+import {
+	postRegister,
+	postLogin,
+	getAuth,
+	postLogout,
+} from '../controller/userController';
 
 export const userRouter = express.Router();
 
@@ -24,3 +29,5 @@ userRouter.post(
 );
 
 userRouter.get('/auth', getAuth);
+
+userRouter.post('/logout', postLogout);

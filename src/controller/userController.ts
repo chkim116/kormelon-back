@@ -124,3 +124,12 @@ export const getAuth = async (req: Request, res: Response) => {
 		res.sendStatus(401);
 	}
 };
+
+export const postLogout = async (req: Request, res: Response) => {
+	try {
+		res.cookie('auth', '', { maxAge: 0 }).status(200);
+	} catch (err) {
+		console.log(err);
+		res.sendStatus(400);
+	}
+};
