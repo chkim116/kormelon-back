@@ -1,7 +1,7 @@
 import express from 'express';
 import { check } from 'express-validator';
 
-import { postCreate } from '../controller/postController';
+import { getPostByTitle, postCreate } from '../controller/postController';
 
 export const postRouter = express.Router();
 
@@ -10,7 +10,7 @@ export const postRouter = express.Router();
 
 postRouter.get('/');
 
-postRouter.get('/:id');
+postRouter.get('/:title', getPostByTitle);
 
 postRouter.post(
 	'/',

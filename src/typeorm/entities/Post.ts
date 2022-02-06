@@ -29,7 +29,7 @@ export class Post {
 	@Column({ default: 0 })
 	view!: number;
 
-	@Column({ default: true })
+	@Column({ default: false })
 	is_private!: boolean;
 
 	@Column('timestamptz')
@@ -40,15 +40,25 @@ export class Post {
 	@UpdateDateColumn()
 	updated_at!: Date;
 
-	@ManyToOne(() => User, (user) => user.posts)
-	@JoinColumn()
-	user!: User;
-
 	@OneToMany(() => Comment, (comment) => comment.posts)
 	comments!: Comment[];
 
-	@ManyToOne(() => Category, (category) => category.posts)
-	@JoinColumn()
+	@Column('uuid', { name: 'userId' })
+	userId!: string;
+
+	@ManyToOne(() => User, (user) => user.posts, {
+		cascade: ['insert'],
+	})
+	@JoinColumn({ name: 'userId', referencedColumnName: 'id' })
+	user!: User;
+
+	@Column('uuid', { name: 'categoryId' })
+	categoryId!: string;
+
+	@ManyToOne(() => Category, (category) => category.posts, {
+		cascade: ['insert'],
+	})
+	@JoinColumn({ name: 'categoryId', referencedColumnName: 'id' })
 	category!: Category;
 
 	@ManyToMany(() => Tag, (tag) => tag.posts)

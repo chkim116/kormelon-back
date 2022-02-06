@@ -5,13 +5,22 @@ import { Post } from '../entities/Post';
 @EntityRepository(Post)
 export class PostRepository extends Repository<Post> {
 	async createPost(data: CreatePostDTO) {
-		const post = await this.create(data);
-		await this.save(post);
+		const post = await this.save(data);
 		return post.title;
 	}
 
-	findByTitle(title: string) {
-		return this.findOne({ title });
+	async findByTitle(title: string) {
+		const result = await this.findOne({
+			where: { title },
+			relations: ['category', 'user', 'tags'],
+		});
+
+		if (result) {
+			result.view++;
+			await this.save(result);
+		}
+
+		return result;
 	}
 
 	findPosts(page: number = 1, perPage: number = 10) {

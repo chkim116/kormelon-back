@@ -23,6 +23,7 @@ export const dbClear = async () => {
 		connection: Connection
 	) {
 		const repository = connection.getRepository(entityName);
+		await repository.query(`SET foreign_key_checks = 0;`);
 		await repository.query(`DELETE FROM ${entityTableName}`);
 	}
 };
