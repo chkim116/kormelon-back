@@ -44,6 +44,7 @@ describe('Post test', () => {
 	const mockPost = {
 		title: '제목',
 		content: '컨텐츠',
+		tags: ['태그1', '태그1', '태그2'],
 	};
 
 	describe('POST /post', () => {
@@ -91,7 +92,8 @@ describe('Post test', () => {
 			expect(res.body.category.value).toBe('임시');
 			expect(res.body.content).toEqual('컨텐츠');
 			expect(res.body.user.username).toEqual('chkim116');
-			expect(res.body.tags).toEqual([]);
+			expect(res.body.tags[0].value).toEqual('태그2');
+			expect(res.body.tags[1].value).toEqual('태그1');
 		});
 
 		it('포스트 리드 실패', async () => {

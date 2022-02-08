@@ -1,10 +1,10 @@
-import { Tag } from '../../typeorm/entities/Tag';
+import { Post } from '../../typeorm/entities/Post';
 
-export interface CreatePostDTO {
+export interface CreatePostDTO extends Omit<Post, 'tags'> {
 	title: string;
 	content: string;
 	userId: string;
 	categoryId: string;
-	isPrivate?: boolean;
-	tags?: Tag[];
+	isPrivate: boolean;
+	tags: string[];
 }

@@ -1,13 +1,11 @@
 import { Request, Response } from 'express';
 import { validationResult } from 'express-validator';
-import { getCustomRepository } from 'typeorm';
 
-import { PostRepository } from '../typeorm/repository/PostRepository';
+import { postRepository } from '../typeorm/repository/PostRepository';
+import { tagRepository } from '../typeorm/repository/TagRepository';
+
+import { Tag } from '../typeorm/entities/Tag';
 import { CreatePostDTO } from './dto/postController.dto';
-
-function postRepository() {
-	return getCustomRepository(PostRepository, process.env.NODE_ENV);
-}
 
 export const getPostByTitle = async (req: Request, res: Response) => {
 	const { title } = req.params;
@@ -18,6 +16,8 @@ export const getPostByTitle = async (req: Request, res: Response) => {
 		if (!post) {
 			return res.status(400).send({ message: '존재하지 않는 게시글입니다.' });
 		}
+
+		console.log(post.tags);
 
 		res.status(200).send(post);
 	} catch (err) {
@@ -37,10 +37,26 @@ export const postCreate = async (req: Request, res: Response) => {
 			return res.status(400).send({ message: errors.array()[0].msg });
 		}
 
+		// create tag
+		let tags: Tag[] = [];
+		const map = [...new Set(data.tags)].map(async (value: string) => {
+			const exist = await tagRepository().checkExist(value);
+			if (exist) {
+				return exist;
+			}
+			return await tagRepository().createTag(value);
+		});
+		await Promise.all(map).then((res) => {
+			res.forEach((tag) => {
+				tag && tags.push(tag);
+			});
+		});
+
+		// create post
 		const postTitle = await postRepository().createPost({
 			...data,
 			isPrivate: data.isPrivate || false,
-			tags: data.tags || [],
+			tags,
 		});
 
 		res.status(201).send(postTitle);

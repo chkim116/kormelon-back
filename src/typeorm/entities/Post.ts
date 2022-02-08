@@ -30,15 +30,15 @@ export class Post {
 	view!: number;
 
 	@Column({ default: false })
-	is_private!: boolean;
+	isPrivate!: boolean;
 
 	@Column('timestamptz')
 	@CreateDateColumn()
-	created_at!: Date;
+	createdAt!: Date;
 
 	@Column('timestamptz')
 	@UpdateDateColumn()
-	updated_at!: Date;
+	updatedAt!: Date;
 
 	@OneToMany(() => Comment, (comment) => comment.posts)
 	comments!: Comment[];
@@ -61,7 +61,9 @@ export class Post {
 	@JoinColumn({ name: 'categoryId', referencedColumnName: 'id' })
 	category!: Category;
 
-	@ManyToMany(() => Tag, (tag) => tag.posts)
+	@ManyToMany(() => Tag, (tag) => tag.posts, {
+		cascade: true,
+	})
 	@JoinTable()
 	tags!: Tag[];
 }

@@ -1,10 +1,13 @@
-import { EntityRepository, Repository } from 'typeorm';
-import { CreatePostDTO } from '../../controller/dto/postController.dto';
+import { EntityRepository, getCustomRepository, Repository } from 'typeorm';
 import { Post } from '../entities/Post';
+
+export function postRepository() {
+	return getCustomRepository(PostRepository, process.env.NODE_ENV);
+}
 
 @EntityRepository(Post)
 export class PostRepository extends Repository<Post> {
-	async createPost(data: CreatePostDTO) {
+	async createPost(data: Post) {
 		const post = await this.save(data);
 		return post.title;
 	}
