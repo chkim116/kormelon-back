@@ -82,6 +82,7 @@ describe('Post test', () => {
 			expect(res.body.content).toEqual('컨텐츠');
 			expect(res.body.user.username).toEqual('chkim116');
 			expect(res.body.tags[0].value).toEqual('태그1');
+			expect(res.body.comments).toEqual([]);
 		});
 
 		it('포스트 리드 실패', async () => {
