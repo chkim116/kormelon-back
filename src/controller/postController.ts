@@ -4,6 +4,7 @@ import { validationResult } from 'express-validator';
 import { categoryRepository } from '../typeorm/repository/CategoryRepository';
 import { postRepository } from '../typeorm/repository/PostRepository';
 import { tagRepository } from '../typeorm/repository/TagRepository';
+import { userRepository } from '../typeorm/repository/UserRepository';
 
 import { CreatePostDTO, PatchPostDTO } from './dto/postController.dto';
 
@@ -51,6 +52,12 @@ export const postCreate = async (req: Request, res: Response) => {
 		if (!errors.isEmpty()) {
 			return res.status(400).send({ message: errors.array()[0].msg });
 		}
+		// find user
+		const user = await userRepository().findOne({ where: { id: data.userId } });
+
+		if (!user) {
+			throw new Error('user is not define');
+		}
 
 		// create category
 		const category = await categoryRepository().createCategory(data.category);
@@ -62,6 +69,7 @@ export const postCreate = async (req: Request, res: Response) => {
 		const postTitle = await postRepository().createPost({
 			...data,
 			category,
+			user,
 			isPrivate: data.isPrivate || false,
 			tags: postTags,
 		});

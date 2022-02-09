@@ -5,6 +5,7 @@
 	"main": "index.js",
 	"scripts": {
 		"test": "jest --forceExit --detectOpenHandles",
+		"test:c": "jest --forceExit --detectOpenHandles --coverage",
 		"dev": "nodemon"
 	},
 	"dependencies": {

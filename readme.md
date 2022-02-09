@@ -15,4 +15,5 @@
   - [x] 카테고리
   - [x] 태그
   - [x] 파지네이션
-- [ ] comment test & API
+- [x] comment test & API
+- [ ] category test & API

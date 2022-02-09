@@ -127,7 +127,7 @@ export const getAuth = async (req: Request, res: Response) => {
 
 export const postLogout = async (req: Request, res: Response) => {
 	try {
-		res.cookie('auth', '', { maxAge: 0 }).status(200);
+		res.cookie('auth', '', { maxAge: 0 }).sendStatus(200);
 	} catch (err) {
 		console.log(err);
 		res.sendStatus(400);

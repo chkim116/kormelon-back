@@ -116,9 +116,8 @@ describe('User test', () => {
 	});
 
 	describe('POST /user/logout', () => {
-		const logout = () => server.post('/user/logout');
 		it('정상적인 로그아웃', async () => {
-			const res = await logout();
+			const res = await server.post('/user/logout');
 
 			expect(res.status).toEqual(200);
 		});
