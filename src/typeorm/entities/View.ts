@@ -2,7 +2,7 @@ import { Entity, Column, PrimaryColumn } from 'typeorm';
 
 @Entity()
 export class View {
-	@PrimaryColumn({ default: 1 })
+	@PrimaryColumn()
 	id!: string;
 
 	@Column()

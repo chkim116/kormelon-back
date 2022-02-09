@@ -15,7 +15,7 @@ beforeAll(async () => {
 });
 
 afterAll(async () => {
-	await dbClear();
+	// await dbClear();
 	await dbClose();
 });
 
@@ -131,6 +131,20 @@ describe('Post test', () => {
 			});
 			expect(err.status).toEqual(400);
 			expect(err.body.message).toEqual('카테고리를 선택해 주세요.');
+		});
+	});
+
+	describe('DELETE /post/:title', () => {
+		const title = encodeURIComponent('제목바뀜');
+		it('정상적인 삭제', async () => {
+			const res = await server.delete(`/post/${title}`);
+			expect(res.status).toBe(200);
+		});
+
+		it('삭제 실패', async () => {
+			const err = await server.delete(`/post/${title}asd`);
+			expect(err.status).toBe(400);
+			expect(err.body.message).toEqual('삭제 중 오류가 발생했습니다.');
 		});
 	});
 });

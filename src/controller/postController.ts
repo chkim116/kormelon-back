@@ -86,3 +86,21 @@ export const patchPost = async (req: Request, res: Response) => {
 		res.status(400).send({ message: '업데이트 중 오류가 발생했습니다.' });
 	}
 };
+
+export const deletePost = async (req: Request, res: Response) => {
+	const { title } = req.params;
+
+	try {
+		const exist = await postRepository().findOne({ title });
+
+		if (!exist) {
+			throw new Error();
+		}
+
+		await postRepository().deletePost(title);
+
+		res.sendStatus(200);
+	} catch (err) {
+		res.status(400).send({ message: '삭제 중 오류가 발생했습니다.' });
+	}
+};

@@ -54,7 +54,7 @@ export class PostRepository extends Repository<Post> {
 		return result.title;
 	}
 
-	deletePost(title: string) {
-		return this.delete({ title });
+	async deletePost(title: string) {
+		await this.delete({ title });
 	}
 }

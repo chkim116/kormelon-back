@@ -5,6 +5,7 @@ import {
 	getPostByTitle,
 	postCreate,
 	patchPost,
+	deletePost,
 } from '../controller/postController';
 
 export const postRouter = express.Router();
@@ -35,4 +36,4 @@ postRouter.patch(
 	patchPost
 );
 
-postRouter.delete('/:id');
+postRouter.delete('/:title', deletePost);
