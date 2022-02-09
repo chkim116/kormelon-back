@@ -10,8 +10,9 @@
   - [x] 로그인
   - [x] 로그아웃
   - [x] 권한
-- [ ] post test & API
-  - [ ] 글쓰기
-  - [ ] 카테고리
-  - [ ] 태그
+- [x] post test & API
+  - [x] 글쓰기
+  - [x] 카테고리
+  - [x] 태그
+  - [x] 파지네이션
 - [ ] comment test & API

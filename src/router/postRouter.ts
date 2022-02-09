@@ -2,10 +2,11 @@ import express from 'express';
 import { check } from 'express-validator';
 
 import {
-	getPostByTitle,
+	getPost,
 	postCreate,
 	patchPost,
 	deletePost,
+	getPosts,
 } from '../controller/postController';
 
 export const postRouter = express.Router();
@@ -13,9 +14,10 @@ export const postRouter = express.Router();
 // * prefix /post
 // ! FIX: user middleware
 
-postRouter.get('/');
+// 전체
+postRouter.get('/', getPosts);
 
-postRouter.get('/:title', getPostByTitle);
+postRouter.get('/:title', getPost);
 
 postRouter.post(
 	'/',

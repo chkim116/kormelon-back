@@ -15,7 +15,7 @@ beforeAll(async () => {
 });
 
 afterAll(async () => {
-	// await dbClear();
+	await dbClear();
 	await dbClose();
 });
 
@@ -145,6 +145,45 @@ describe('Post test', () => {
 			const err = await server.delete(`/post/${title}asd`);
 			expect(err.status).toBe(400);
 			expect(err.body.message).toEqual('삭제 중 오류가 발생했습니다.');
+		});
+	});
+
+	describe('GET /post/', () => {
+		const page = '1';
+		const per = '2';
+
+		beforeAll(async () => {
+			const createPosts = Array.from({ length: 3 }).map(async (_, i) => {
+				return await server
+					.post('/post')
+					.send({ ...mockPost, userId, title: i });
+			});
+			await Promise.all(createPosts);
+		});
+
+		it('query를 아무것도 넘기지 않아도 자동으로 1페이지 반환', async () => {
+			// per는 기본적으로 5개 고정.
+			const res = await server.get(`/post`);
+
+			expect(res.status).toBe(200);
+			expect(res.body.total).toBe(3);
+			expect(res.body.results).toHaveLength(3);
+		});
+
+		it('첫번째 페이지, 2개의 게시글.', async () => {
+			const res = await server.get(`/post?page=${page}&per=${per}`);
+
+			expect(res.status).toBe(200);
+			expect(res.body.total).toBe(3);
+			expect(res.body.results).toHaveLength(2);
+		});
+
+		it('두번째 페이지, 1개의 게시글.', async () => {
+			const res = await server.get(`/post?page=${2}&per=${per}`);
+
+			expect(res.status).toBe(200);
+			expect(res.body.total).toBe(3);
+			expect(res.body.results).toHaveLength(1);
 		});
 	});
 });

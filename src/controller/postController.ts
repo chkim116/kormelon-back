@@ -7,7 +7,24 @@ import { tagRepository } from '../typeorm/repository/TagRepository';
 
 import { CreatePostDTO, PatchPostDTO } from './dto/postController.dto';
 
-export const getPostByTitle = async (req: Request, res: Response) => {
+export const getPosts = async (req: Request, res: Response) => {
+	const { page, per } = req.query as { page: string; per: string };
+	try {
+		const posts = await postRepository().findPosts(
+			Number(page) || 1,
+			Number(per) || 5
+		);
+
+		res.status(200).send(posts);
+	} catch (err) {
+		console.log(err);
+		res
+			.status(400)
+			.send({ message: '게시글을 불러오는 중 오류가 발생했습니다.' });
+	}
+};
+
+export const getPost = async (req: Request, res: Response) => {
 	const { title } = req.params;
 
 	try {

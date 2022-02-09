@@ -16,7 +16,7 @@ export class PostRepository extends Repository<Post> {
 	async findByTitle(title: string) {
 		const result = await this.findOne({
 			where: { title },
-			relations: ['category', 'user', 'tags'],
+			relations: ['category', 'user', 'tags', 'comments'],
 		});
 
 		if (result) {
@@ -27,14 +27,14 @@ export class PostRepository extends Repository<Post> {
 		return result;
 	}
 
-	findPosts(page: number = 1, perPage: number = 10) {
-		const results = this.find({
+	async findPosts(page: number = 1, per: number = 10) {
+		const results = await this.find({
 			order: { id: 'DESC' },
-			skip: (page - 1) * perPage,
-			take: perPage,
+			skip: (page - 1) * per,
+			take: per,
 		});
 
-		const total = this.count();
+		const total = await this.count();
 
 		return {
 			total,
