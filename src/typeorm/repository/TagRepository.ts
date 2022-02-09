@@ -14,8 +14,25 @@ export class TagRepository extends Repository<Tag> {
 
 	async createTag(value: string) {
 		const tag = this.create({ value });
-		const result = await this.save(tag);
+		return await this.save(tag);
+	}
 
-		return result;
+	async createTags(values: string[]) {
+		const tags: Tag[] = [];
+
+		const map = [...new Set(values)].map(async (value: string) => {
+			const exist = await tagRepository().checkExist(value);
+			if (exist) {
+				return exist;
+			}
+			return await tagRepository().createTag(value);
+		});
+		await Promise.all(map).then((res) => {
+			res.forEach((tag) => {
+				tag && tags.push(tag);
+			});
+		});
+
+		return tags;
 	}
 }

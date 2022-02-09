@@ -8,8 +8,9 @@ export function postRepository() {
 @EntityRepository(Post)
 export class PostRepository extends Repository<Post> {
 	async createPost(data: Post) {
-		const post = await this.save(data);
-		return post.title;
+		const post = this.create(data);
+		const result = await this.save(post);
+		return result.title;
 	}
 
 	async findByTitle(title: string) {
@@ -41,9 +42,16 @@ export class PostRepository extends Repository<Post> {
 		};
 	}
 
-	async updatePost(data: Post) {
-		await this.update({ title: data.id }, data);
-		return data.title;
+	async updatePost(title: string, updateData: Post) {
+		const post = await this.findOne({ title });
+
+		// update
+		const result = await this.save({
+			...post,
+			...updateData,
+		});
+
+		return result.title;
 	}
 
 	deletePost(title: string) {
