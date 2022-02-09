@@ -1,23 +1,8 @@
 import request from 'supertest';
 import { getRepository } from 'typeorm';
 
-import { postRouter } from '../router/postRouter';
 import { User } from '../typeorm/entities/User';
 import { createTestServer, dbClear, dbClose, dbConnect } from './features';
-
-let server: request.SuperTest<request.Test>;
-let userId: string;
-
-beforeAll(async () => {
-	server = createTestServer('/post', postRouter);
-	await dbConnect();
-	userId = await getUserId();
-});
-
-afterAll(async () => {
-	await dbClear();
-	await dbClose();
-});
 
 async function getUserId() {
 	const user = new User();
@@ -27,6 +12,19 @@ async function getUserId() {
 	const result = await getRepository(User, process.env.NODE_ENV).save(user);
 	return result.id;
 }
+
+const server: request.SuperTest<request.Test> = createTestServer();
+let userId: string;
+
+beforeAll(async () => {
+	await dbConnect();
+	userId = await getUserId();
+});
+
+afterAll(async () => {
+	await dbClear();
+	await dbClose();
+});
 
 describe('Post test', () => {
 	const mockPost = {

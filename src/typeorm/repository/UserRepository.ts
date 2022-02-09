@@ -1,5 +1,9 @@
-import { EntityRepository, Repository } from 'typeorm';
+import { EntityRepository, getCustomRepository, Repository } from 'typeorm';
 import { User } from '../entities/User';
+
+export function userRepository() {
+	return getCustomRepository(UserRepository, process.env.NODE_ENV);
+}
 
 @EntityRepository(User)
 export class UserRepository extends Repository<User> {

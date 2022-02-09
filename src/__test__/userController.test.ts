@@ -1,11 +1,10 @@
 import request from 'supertest';
 
-import { userRouter } from '../router/userRouter';
 import { dbConnect, dbClose, createTestServer, dbClear } from './features';
 
-let server: request.SuperTest<request.Test>;
+const server: request.SuperTest<request.Test> = createTestServer();
+
 beforeAll(async () => {
-	server = createTestServer('/user', userRouter);
 	await dbConnect();
 });
 

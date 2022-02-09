@@ -6,9 +6,7 @@ import {
 	ManyToOne,
 	UpdateDateColumn,
 	JoinColumn,
-	OneToMany,
 } from 'typeorm';
-import { CommentReply } from './CommentReply';
 import { Post } from './Post';
 import { User } from './User';
 
@@ -20,26 +18,21 @@ export class Comment {
 	@Column()
 	text!: string;
 
-	@Column({ default: false })
-	has_replies!: boolean;
+	@Column({ type: 'simple-array', default: null })
+	commentReplies!: Comment[] | null;
 
 	@Column('timestamptz')
 	@CreateDateColumn()
-	created_at!: Date;
+	createdAt!: Date;
 
 	@Column('timestamptz')
 	@UpdateDateColumn()
-	updated_at!: Date;
+	updatedAt!: Date;
 
 	@ManyToOne(() => User, (user) => user.comments)
 	@JoinColumn()
 	user!: User;
 
 	@ManyToOne(() => Post, (post) => post.comments)
-	@JoinColumn()
-	posts!: Post;
-
-	@OneToMany(() => CommentReply, (reply) => reply.parent_comment)
-	@JoinColumn()
-	reply_comments!: Comment[];
+	post!: Post;
 }

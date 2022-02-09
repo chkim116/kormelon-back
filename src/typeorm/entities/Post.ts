@@ -40,7 +40,7 @@ export class Post {
 	@UpdateDateColumn()
 	updatedAt!: Date;
 
-	@OneToMany(() => Comment, (comment) => comment.posts)
+	@OneToMany(() => Comment, (comment) => comment.post)
 	comments!: Comment[];
 
 	@Column('uuid', { name: 'userId' })
