@@ -17,7 +17,7 @@ export const postRouter = express.Router();
 // 전체
 postRouter.get('/', getPosts);
 
-postRouter.get('/:title', getPost);
+postRouter.get('/:id', getPost);
 
 postRouter.post(
 	'/',
@@ -30,7 +30,7 @@ postRouter.post(
 );
 
 postRouter.patch(
-	'/:title',
+	'/:id',
 	[
 		check('title', '제목을 입력해 주세요.').exists().notEmpty(),
 		check('category', '카테고리를 선택해 주세요.').exists().notEmpty(),
@@ -38,4 +38,4 @@ postRouter.patch(
 	patchPost
 );
 
-postRouter.delete('/:title', deletePost);
+postRouter.delete('/:id', deletePost);

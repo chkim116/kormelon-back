@@ -26,10 +26,10 @@ export const getPosts = async (req: Request, res: Response) => {
 };
 
 export const getPost = async (req: Request, res: Response) => {
-	const { title } = req.params;
+	const { id } = req.params;
 
 	try {
-		const post = await postRepository().findByTitle(title);
+		const post = await postRepository().findById(id);
 
 		if (!post) {
 			return res.status(400).send({ message: '존재하지 않는 게시글입니다.' });
@@ -66,7 +66,7 @@ export const postCreate = async (req: Request, res: Response) => {
 		const postTags = await tagRepository().createTags(data.tags);
 
 		// create post
-		const postTitle = await postRepository().createPost({
+		const postId = await postRepository().createPost({
 			...data,
 			category,
 			user,
@@ -74,7 +74,7 @@ export const postCreate = async (req: Request, res: Response) => {
 			tags: postTags,
 		});
 
-		res.status(201).send(postTitle);
+		res.status(201).send(postId);
 	} catch (err) {
 		console.log(err);
 		res.status(400).send({ message: '작성 중 오류가 발생했습니다.' });
@@ -83,7 +83,7 @@ export const postCreate = async (req: Request, res: Response) => {
 
 export const patchPost = async (req: Request, res: Response) => {
 	const updateData: PatchPostDTO = req.body;
-	const { title } = req.params;
+	const { id } = req.params;
 
 	try {
 		// valid
@@ -100,29 +100,29 @@ export const patchPost = async (req: Request, res: Response) => {
 		// create tag
 		const postTags = await tagRepository().createTags(updateData.tags);
 
-		const postTitle = await postRepository().updatePost(title, {
+		const postId = await postRepository().updatePost(id, {
 			...updateData,
 			category,
 			tags: postTags,
 		});
 
-		res.status(200).send(postTitle);
+		res.status(200).send(postId);
 	} catch (err) {
 		res.status(400).send({ message: '업데이트 중 오류가 발생했습니다.' });
 	}
 };
 
 export const deletePost = async (req: Request, res: Response) => {
-	const { title } = req.params;
+	const { id } = req.params;
 
 	try {
-		const exist = await postRepository().findOne({ title });
+		const exist = await postRepository().findOne({ id });
 
 		if (!exist) {
 			throw new Error();
 		}
 
-		await postRepository().deletePost(title);
+		await postRepository().deletePost(id);
 
 		res.sendStatus(200);
 	} catch (err) {

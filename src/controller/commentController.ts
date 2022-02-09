@@ -6,11 +6,11 @@ import { userRepository } from '../typeorm/repository/UserRepository';
 import { CreateCommentDTO } from './dto/commentController.dto';
 
 export const postCreateComment = async (req: Request, res: Response) => {
-	const { title } = req.params;
+	const { id } = req.params;
 	const { text, userId }: CreateCommentDTO = req.body;
 
 	try {
-		const post = await postRepository().findByTitle(title);
+		const post = await postRepository().findOne({ id });
 
 		const user = await userRepository().findOne({
 			where: { id: userId },

@@ -12,5 +12,5 @@ export const commentRouter = express.Router();
  * /post/comment
  */
 
-commentRouter.post('/:title', postCreateComment);
+commentRouter.post('/:id', postCreateComment);
 commentRouter.post('/reply/:id', postCreateReply);

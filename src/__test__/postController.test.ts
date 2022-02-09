@@ -1,5 +1,6 @@
 import request from 'supertest';
 import { getRepository } from 'typeorm';
+import { Post } from '../typeorm/entities/Post';
 
 import { User } from '../typeorm/entities/User';
 import { createTestServer, dbClear, dbClose, dbConnect } from './features';
@@ -37,8 +38,12 @@ describe('Post test', () => {
 	describe('POST /post', () => {
 		it('정상적인 컨텐츠 생성', async () => {
 			const res = await server.post('/post').send({ ...mockPost, userId });
+			const post = await getRepository(Post, process.env.NODE_ENV).findOne({
+				where: { title: mockPost.title },
+			});
+
 			expect(res.status).toEqual(201);
-			expect(res.text).toEqual('제목');
+			expect(res.text).toEqual(post!.id);
 		});
 
 		it('제목 빼먹음', async () => {
@@ -69,10 +74,14 @@ describe('Post test', () => {
 		});
 	});
 
-	describe('GET /post/:title', () => {
-		const title = encodeURIComponent('제목');
+	describe('GET /post/:id', () => {
+		const title = '제목';
 		it('정상적인 포스트 리드', async () => {
-			const res = await server.get(`/post/${title}`);
+			const post = await getRepository(Post, process.env.NODE_ENV).findOne({
+				where: { title },
+			});
+
+			const res = await server.get(`/post/${post!.id}`);
 			expect(res.status).toEqual(200);
 			expect(res.body.title).toEqual('제목');
 			expect(res.body.view).toEqual(1);
@@ -90,21 +99,26 @@ describe('Post test', () => {
 		});
 	});
 
-	describe('PATCH /post/:title', () => {
-		const title = encodeURIComponent('제목');
+	describe('PATCH /post/:id', () => {
+		const title = '제목';
+		const updateTitle = '제목바뀜';
 		it('정상적인 업데이트', async () => {
-			const res = await server.patch(`/post/${title}`).send({
+			const post = await getRepository(Post, process.env.NODE_ENV).findOne({
+				where: { title },
+			});
+
+			const res = await server.patch(`/post/${post!.id}`).send({
 				title: '제목바뀜',
 				category: '임시2',
 				tags: ['태그1', '태그2', '태그3'],
 			});
 
 			expect(res.status).toBe(200);
-			expect(res.text).toEqual('제목바뀜');
+			expect(res.text).toEqual(post!.id);
 		});
 
-		it('잘못된 타이틀 요청으로 인한 업데이트 실패', async () => {
-			const err = await server.patch(`/post/${title}as~`).send({
+		it('잘못된 /:id 요청으로 인한 업데이트 실패', async () => {
+			const err = await server.patch(`/post/${'asd'}`).send({
 				title: '제목바뀜',
 				category: '임시2',
 				tags: ['태그1', '태그2', '태그3'],
@@ -115,7 +129,11 @@ describe('Post test', () => {
 		});
 
 		it('제목 빼먹음', async () => {
-			const err = await server.patch(`/post/${title}as~`).send({
+			const post = await getRepository(Post, process.env.NODE_ENV).findOne({
+				where: { title: updateTitle },
+			});
+
+			const err = await server.patch(`/post/${post!.id}`).send({
 				title: '',
 				category: '임시2',
 			});
@@ -125,7 +143,11 @@ describe('Post test', () => {
 		});
 
 		it('카테고리 빼먹음', async () => {
-			const err = await server.patch(`/post/${title}as~`).send({
+			const post = await getRepository(Post, process.env.NODE_ENV).findOne({
+				where: { title: updateTitle },
+			});
+
+			const err = await server.patch(`/post/${post!.id}`).send({
 				title: '제목바뀜',
 			});
 			expect(err.status).toEqual(400);
@@ -133,15 +155,19 @@ describe('Post test', () => {
 		});
 	});
 
-	describe('DELETE /post/:title', () => {
-		const title = encodeURIComponent('제목바뀜');
+	describe('DELETE /post/:id', () => {
+		const title = '제목바뀜';
 		it('정상적인 삭제', async () => {
-			const res = await server.delete(`/post/${title}`);
+			const post = await getRepository(Post, process.env.NODE_ENV).findOne({
+				where: { title },
+			});
+
+			const res = await server.delete(`/post/${post!.id}`);
 			expect(res.status).toBe(200);
 		});
 
 		it('삭제 실패', async () => {
-			const err = await server.delete(`/post/${title}asd`);
+			const err = await server.delete(`/post/${'asd'}`);
 			expect(err.status).toBe(400);
 			expect(err.body.message).toEqual('삭제 중 오류가 발생했습니다.');
 		});

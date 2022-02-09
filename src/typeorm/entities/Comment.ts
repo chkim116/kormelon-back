@@ -19,7 +19,7 @@ export class Comment {
 	text!: string;
 
 	@Column({ type: 'simple-array', default: null })
-	commentReplies!: Comment[] | null;
+	commentReplies!: Omit<Comment, 'commentReplies'>[] | null;
 
 	@Column('timestamptz')
 	@CreateDateColumn()

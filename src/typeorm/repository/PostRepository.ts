@@ -10,12 +10,12 @@ export class PostRepository extends Repository<Post> {
 	async createPost(data: Post) {
 		const post = this.create(data);
 		const result = await this.save(post);
-		return result.title;
+		return result.id;
 	}
 
-	async findByTitle(title: string) {
+	async findById(id: string) {
 		const result = await this.findOne({
-			where: { title },
+			where: { id },
 			relations: ['category', 'user', 'tags', 'comments'],
 		});
 
@@ -42,8 +42,8 @@ export class PostRepository extends Repository<Post> {
 		};
 	}
 
-	async updatePost(title: string, updateData: Post) {
-		const post = await this.findOne({ title });
+	async updatePost(id: string, updateData: Post) {
+		const post = await this.findOne({ id });
 
 		// update
 		const result = await this.save({
@@ -51,10 +51,10 @@ export class PostRepository extends Repository<Post> {
 			...updateData,
 		});
 
-		return result.title;
+		return result.id;
 	}
 
-	async deletePost(title: string) {
-		await this.delete({ title });
+	async deletePost(id: string) {
+		await this.delete({ id });
 	}
 }

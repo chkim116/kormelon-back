@@ -34,10 +34,9 @@ describe('Post comment test', () => {
 		text: '멋진 코멘트',
 	};
 
-	describe('POST /post/comment/:title', () => {
-		const title = encodeURIComponent('제목');
+	describe('POST /post/comment/:id', () => {
 		it('정상적인 댓글 생성', async () => {
-			await server.post('/post').send({
+			const post = await server.post('/post').send({
 				title: '제목',
 				content: '컨텐츠',
 				category: '임시',
@@ -45,7 +44,7 @@ describe('Post comment test', () => {
 			});
 
 			const res = await server
-				.post(`/post/comment/${title}`)
+				.post(`/post/comment/${post.text}`)
 				.send({ ...mockComment, userId });
 
 			expect(res.status).toBe(201);
@@ -53,7 +52,7 @@ describe('Post comment test', () => {
 
 		it('게시글이 없으면 댓글 생성 하지 않음', async () => {
 			const err = await server
-				.post(`/post/comment/${title}2`)
+				.post(`/post/comment/${'asd'}`)
 				.send({ ...mockComment, userId });
 
 			expect(err.status).toBe(400);
@@ -61,7 +60,7 @@ describe('Post comment test', () => {
 		});
 
 		it('알 수 없는 오류로 댓글 생성 실패', async () => {
-			const err = await server.post('/post/comment/1a2').send({});
+			const err = await server.post('/post/comment/asd').send({});
 
 			expect(err.status).toBe(400);
 			expect(err.body.message).toEqual('댓글 작성 중 오류가 발생했습니다.');
