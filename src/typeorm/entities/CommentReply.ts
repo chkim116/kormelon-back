@@ -1,27 +1,26 @@
 import {
 	Entity,
-	Column,
-	PrimaryGeneratedColumn,
-	CreateDateColumn,
 	ManyToOne,
-	UpdateDateColumn,
 	JoinColumn,
-	OneToMany,
+	Column,
+	CreateDateColumn,
+	PrimaryGeneratedColumn,
+	UpdateDateColumn,
 } from 'typeorm';
-import { CommentReply } from './CommentReply';
-import { Post } from './Post';
+import { Comment } from './Comment';
 import { User } from './User';
 
 @Entity()
-export class Comment {
+export class CommentReply {
 	@PrimaryGeneratedColumn('uuid')
 	id!: string;
 
 	@Column()
 	text!: string;
 
-	@OneToMany(() => CommentReply, (commentReply) => commentReply.parent)
-	commentReplies!: CommentReply[];
+	@ManyToOne(() => Comment, (comment) => comment.commentReplies)
+	@JoinColumn()
+	parent!: Comment;
 
 	@Column('timestamptz')
 	@CreateDateColumn()
@@ -34,7 +33,4 @@ export class Comment {
 	@ManyToOne(() => User, (user) => user.comments)
 	@JoinColumn()
 	user!: User;
-
-	@ManyToOne(() => Post, (post) => post.comments)
-	post!: Post;
 }
