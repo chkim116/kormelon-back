@@ -38,6 +38,7 @@ export const postCreateReply = async (req: Request, res: Response) => {
 	try {
 		const comment = await commentRepository().findOne({
 			where: { id },
+			relations: ['commentReplies'],
 		});
 
 		const user = await userRepository().findOne({
@@ -111,5 +112,43 @@ export const patchCreateReply = async (req: Request, res: Response) => {
 	} catch (err) {
 		console.log(err);
 		res.status(400).send({ message: '변경 중 오류가 발생했습니다.' });
+	}
+};
+
+export const deleteComment = async (req: Request, res: Response) => {
+	const { id } = req.params;
+
+	try {
+		const comment = await commentRepository().findOne({ id });
+
+		if (!comment) {
+			throw new Error();
+		}
+
+		await commentRepository().deleteComment(comment);
+		res.sendStatus(200);
+	} catch (err) {
+		console.log(err);
+		res.status(400).send({ message: '삭제 중 오류가 발생했습니다.' });
+	}
+};
+export const deleteReply = async (req: Request, res: Response) => {
+	const { id } = req.params;
+
+	try {
+		const comment = await commentReplyRepository().findOne({
+			where: { id },
+			relations: ['parent'],
+		});
+
+		if (!comment) {
+			throw new Error();
+		}
+
+		await commentRepository().deleteCommentReply(comment);
+		res.sendStatus(200);
+	} catch (err) {
+		console.log(err);
+		res.status(400).send({ message: '삭제 중 오류가 발생했습니다.' });
 	}
 };

@@ -80,6 +80,10 @@ describe('Post comment test', () => {
 				.post(`/post/comment/reply/${parentComment!.id}`)
 				.send({ text: '대댓글', userId });
 
+			await server
+				.post(`/post/comment/reply/${parentComment!.id}`)
+				.send({ text: '대댓글a', userId });
+
 			expect(res.status).toBe(201);
 		});
 
@@ -148,8 +152,6 @@ describe('Post comment test', () => {
 				where: { text: '대댓글' },
 			});
 
-			console.log(commentReply);
-
 			const res = await server
 				.patch(`/post/comment/reply/${commentReply!.id}`)
 				.send({ text: '대댓글2', userId });
@@ -177,6 +179,44 @@ describe('Post comment test', () => {
 
 			expect(err.status).toBe(400);
 			expect(err.body.message).toEqual('댓글을 작성한 유저가 아닙니다.');
+		});
+	});
+
+	describe('DELETE /post/comment/:id', () => {
+		it('정상적인 댓글 삭제', async () => {
+			const comment = await commentRepository().findOne({
+				where: { text: '멋진 코멘트2' },
+			});
+
+			const res = await server.delete(`/post/comment/${comment!.id}`);
+
+			expect(res.status).toBe(200);
+		});
+
+		it('삭제 실패', async () => {
+			const err = await server.delete('/post/comment/asd');
+
+			expect(err.status).toBe(400);
+			expect(err.body.message).toEqual('삭제 중 오류가 발생했습니다.');
+		});
+	});
+
+	describe('DELETE /post/comment/reply/:id', () => {
+		it('정상적인 대댓글 삭제', async () => {
+			const comment = await commentReplyRepository().findOne({
+				where: { text: '대댓글2' },
+			});
+
+			const res = await server.delete(`/post/comment/reply/${comment!.id}`);
+
+			expect(res.status).toBe(200);
+		});
+
+		it('대댓글 삭제 실패', async () => {
+			const err = await server.delete('/post/comment/reply/asd');
+
+			expect(err.status).toBe(400);
+			expect(err.body.message).toEqual('삭제 중 오류가 발생했습니다.');
 		});
 	});
 });

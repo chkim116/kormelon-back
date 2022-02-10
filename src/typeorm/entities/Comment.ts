@@ -31,6 +31,9 @@ export class Comment {
 	@UpdateDateColumn()
 	updatedAt!: Date;
 
+	@Column('date', { default: null })
+	deletedAt!: Date | null;
+
 	@ManyToOne(() => User, (user) => user.comments)
 	@JoinColumn()
 	user!: User;

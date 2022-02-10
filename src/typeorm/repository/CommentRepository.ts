@@ -42,6 +42,15 @@ export class CommentRepository extends Repository<Comment> {
 		});
 	}
 
+	async deleteComment(prevComment: Comment) {
+		const deleteComment = this.create({
+			text: '삭제된 댓글입니다.',
+			deletedAt: new Date(),
+		});
+
+		await this.save({ ...prevComment, ...deleteComment });
+	}
+
 	async createCommentReply(parent: Comment, user: User, text: string) {
 		// reply 생성
 		const commentReply = commentReplyRepository().create({
@@ -54,6 +63,8 @@ export class CommentRepository extends Repository<Comment> {
 		const commentReplies = parent.commentReplies
 			? [...parent.commentReplies, commentReply]
 			: [commentReply];
+
+		console.log(commentReplies);
 
 		const result = this.create({
 			...parent,
@@ -76,7 +87,16 @@ export class CommentRepository extends Repository<Comment> {
 		});
 	}
 
-	async deleteCommentReply(id: string) {
-		await commentReplyRepository().delete({ id });
+	async deleteCommentReply(comment: CommentReply) {
+		const s = await this.findOne({
+			where: { text: '삭제된 댓글입니다.' },
+			relations: ['commentReplies'],
+		});
+		await commentReplyRepository().delete({ id: comment.id });
+		const a = await this.findOne({
+			where: { text: '삭제된 댓글입니다.' },
+			relations: ['commentReplies'],
+		});
+		console.log(s, a);
 	}
 }
