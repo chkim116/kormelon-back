@@ -1,8 +1,11 @@
 import request from 'supertest';
 import { getRepository } from 'typeorm';
-import { Comment } from '../typeorm/entities/Comment';
+
 import { User } from '../typeorm/entities/User';
-import { commentRepository } from '../typeorm/repository/CommentRepository';
+import {
+	commentReplyRepository,
+	commentRepository,
+} from '../typeorm/repository/CommentRepository';
 
 import { createTestServer, dbClear, dbClose, dbConnect } from './features';
 
@@ -69,10 +72,7 @@ describe('Post comment test', () => {
 
 	describe('POST /post/comment/reply/:id', () => {
 		it('정상적인 대댓글 생성', async () => {
-			const parentComment = await getRepository(
-				Comment,
-				process.env.NODE_ENV
-			).findOne({
+			const parentComment = await commentRepository().findOne({
 				where: { text: '멋진 코멘트' },
 			});
 
@@ -85,7 +85,7 @@ describe('Post comment test', () => {
 
 		it('올바르지 않은 params', async () => {
 			const err = await server
-				.post(`/post/comment/reply/12`)
+				.post(`/post/comment/reply/asd`)
 				.send({ text: '대댓글', userId });
 
 			expect(err.status).toBe(400);
@@ -103,6 +103,80 @@ describe('Post comment test', () => {
 
 			expect(err.status).toBe(400);
 			expect(err.body.message).toEqual('대댓글 작성 중 오류가 발생했습니다.');
+		});
+	});
+
+	describe('PATCH /post/comment/:id', () => {
+		it('정상적인 댓글 업데이트', async () => {
+			const comment = await commentRepository().findOne({
+				where: { text: '멋진 코멘트' },
+			});
+
+			const res = await server
+				.patch(`/post/comment/${comment!.id}`)
+				.send({ text: '멋진 코멘트2', userId });
+
+			expect(res.status).toBe(200);
+		});
+
+		it('댓글이 존재하지 않을때.', async () => {
+			const err = await server
+				.patch(`/post/comment/${'asd'}`)
+				.send({ text: '멋진 코멘트2', userId });
+
+			expect(err.status).toBe(400);
+			expect(err.body.message).toEqual('댓글이 존재하지 않습니다.');
+		});
+
+		it('댓글을 작성한 유저가 아닐때.', async () => {
+			const comment = await commentRepository().findOne({
+				where: { text: '멋진 코멘트2' },
+			});
+
+			const err = await server
+				.patch(`/post/comment/${comment!.id}`)
+				.send({ text: '멋진 코멘트2', userId: 'asd' });
+
+			expect(err.status).toBe(400);
+			expect(err.body.message).toEqual('댓글을 작성한 유저가 아닙니다.');
+		});
+	});
+
+	describe('PATCH /post/comment/reply/:id', () => {
+		it('정상적인 대댓글 업데이트', async () => {
+			const commentReply = await commentReplyRepository().findOne({
+				where: { text: '대댓글' },
+			});
+
+			console.log(commentReply);
+
+			const res = await server
+				.patch(`/post/comment/reply/${commentReply!.id}`)
+				.send({ text: '대댓글2', userId });
+
+			expect(res.status).toBe(200);
+		});
+
+		it('댓글이 존재하지 않을때.', async () => {
+			const err = await server
+				.patch(`/post/comment/reply/${'asd'}`)
+				.send({ text: '대댓글2', userId });
+
+			expect(err.status).toBe(400);
+			expect(err.body.message).toEqual('댓글이 존재하지 않습니다.');
+		});
+
+		it('댓글을 작성한 유저가 아닐 때.', async () => {
+			const commentReply = await commentReplyRepository().findOne({
+				where: { text: '대댓글2' },
+			});
+
+			const err = await server
+				.patch(`/post/comment/reply/${commentReply!.id}`)
+				.send({ text: '대댓글2', userId: 'asd' });
+
+			expect(err.status).toBe(400);
+			expect(err.body.message).toEqual('댓글을 작성한 유저가 아닙니다.');
 		});
 	});
 });
