@@ -38,6 +38,12 @@ export class Comment {
 	@JoinColumn()
 	user!: User;
 
+	@Column()
+	username!: string;
+
+	@Column()
+	password!: string;
+
 	@ManyToOne(() => Post, (post) => post.comments)
 	post!: Post;
 }

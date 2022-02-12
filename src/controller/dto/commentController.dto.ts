@@ -1,4 +1,5 @@
 export interface CreateCommentDTO {
 	text: string;
-	userId: string;
+	username?: string;
+	password?: string;
 }

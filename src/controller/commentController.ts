@@ -4,26 +4,32 @@ import {
 	commentRepository,
 } from '../typeorm/repository/CommentRepository';
 import { postRepository } from '../typeorm/repository/PostRepository';
-import { userRepository } from '../typeorm/repository/UserRepository';
 
 import { CreateCommentDTO } from './dto/commentController.dto';
 
 export const postCreateComment = async (req: Request, res: Response) => {
 	const { id } = req.params;
-	const { text, userId }: CreateCommentDTO = req.body;
+	const { text, password, username }: CreateCommentDTO = req.body;
+	const user = req.user;
 
 	try {
 		const post = await postRepository().findOne({ id });
 
-		const user = await userRepository().findOne({
-			where: { id: userId },
-		});
-
-		if (!post || !user) {
-			throw new Error('post or user가 없습니다.');
+		if (!post) {
+			throw new Error('post가 없습니다.');
 		}
 
-		await commentRepository().createComment(post, user, text);
+		const creator = {
+			username: user?.username || username || '익명',
+			password: user?.password || password || '',
+		};
+
+		await commentRepository().createComment({
+			post,
+			user,
+			text,
+			creator,
+		});
 		res.sendStatus(201);
 	} catch (err) {
 		console.log(err);
@@ -33,7 +39,8 @@ export const postCreateComment = async (req: Request, res: Response) => {
 
 export const postCreateReply = async (req: Request, res: Response) => {
 	const { id } = req.params;
-	const { userId, text }: CreateCommentDTO = req.body;
+	const { text, username, password }: CreateCommentDTO = req.body;
+	const user = req.user;
 
 	try {
 		const comment = await commentRepository().findOne({
@@ -41,15 +48,21 @@ export const postCreateReply = async (req: Request, res: Response) => {
 			relations: ['commentReplies'],
 		});
 
-		const user = await userRepository().findOne({
-			where: { id: userId },
-		});
-
-		if (!comment || !user) {
-			throw new Error('comment or user가 없습니다.');
+		if (!comment) {
+			throw new Error('comment가 없습니다.');
 		}
 
-		await commentRepository().createCommentReply(comment, user, text);
+		const creator = {
+			username: user?.username || username || '익명',
+			password: user?.password || password || '',
+		};
+
+		await commentRepository().createCommentReply({
+			comment,
+			user,
+			text,
+			creator,
+		});
 
 		res.sendStatus(201);
 	} catch (err) {
@@ -60,7 +73,8 @@ export const postCreateReply = async (req: Request, res: Response) => {
 
 export const patchCreateComment = async (req: Request, res: Response) => {
 	const { id } = req.params;
-	const { userId, text }: CreateCommentDTO = req.body;
+	const { text, password }: CreateCommentDTO = req.body;
+	const user = req.user;
 
 	try {
 		const comment = await commentRepository().findOne({
@@ -72,9 +86,15 @@ export const patchCreateComment = async (req: Request, res: Response) => {
 			return res.status(400).send({ message: '댓글이 존재하지 않습니다.' });
 		}
 
-		if (comment.user.id !== userId) {
+		if (!user) {
+			if (comment.password !== password) {
+				return res.status(401).send({ message: '비밀번호가 틀립니다.' });
+			}
+		}
+
+		if (user && comment.user.id !== user.id) {
 			return res
-				.status(400)
+				.status(401)
 				.send({ message: '댓글을 작성한 유저가 아닙니다.' });
 		}
 
@@ -86,9 +106,11 @@ export const patchCreateComment = async (req: Request, res: Response) => {
 		res.status(400).send({ message: '변경 중 오류가 발생했습니다.' });
 	}
 };
+
 export const patchCreateReply = async (req: Request, res: Response) => {
 	const { id } = req.params;
-	const { userId, text }: CreateCommentDTO = req.body;
+	const { text, password }: CreateCommentDTO = req.body;
+	const user = req.user;
 
 	try {
 		const commentReply = await commentReplyRepository().findOne({
@@ -100,9 +122,15 @@ export const patchCreateReply = async (req: Request, res: Response) => {
 			return res.status(400).send({ message: '댓글이 존재하지 않습니다.' });
 		}
 
-		if (commentReply.user.id !== userId) {
+		if (!user) {
+			if (commentReply.password !== password) {
+				return res.status(401).send({ message: '비밀번호가 틀립니다.' });
+			}
+		}
+
+		if (user && commentReply.user.id !== user.id) {
 			return res
-				.status(400)
+				.status(401)
 				.send({ message: '댓글을 작성한 유저가 아닙니다.' });
 		}
 
@@ -117,12 +145,29 @@ export const patchCreateReply = async (req: Request, res: Response) => {
 
 export const deleteComment = async (req: Request, res: Response) => {
 	const { id } = req.params;
+	const { password } = req.body;
+	const user = req.user;
 
 	try {
-		const comment = await commentRepository().findOne({ id });
+		const comment = await commentRepository().findOne({
+			where: { id },
+			relations: ['user'],
+		});
 
 		if (!comment) {
 			throw new Error();
+		}
+
+		if (!user) {
+			if (comment.password !== password) {
+				return res.status(401).send({ message: '비밀번호가 틀립니다.' });
+			}
+		}
+
+		if (user && comment.user.id !== user.id) {
+			return res
+				.status(401)
+				.send({ message: '댓글을 작성한 유저가 아닙니다.' });
 		}
 
 		await commentRepository().deleteComment(comment);
@@ -132,20 +177,35 @@ export const deleteComment = async (req: Request, res: Response) => {
 		res.status(400).send({ message: '삭제 중 오류가 발생했습니다.' });
 	}
 };
+
 export const deleteReply = async (req: Request, res: Response) => {
 	const { id } = req.params;
+	const { password } = req.body;
+	const user = req.user;
 
 	try {
-		const comment = await commentReplyRepository().findOne({
+		const commentReply = await commentReplyRepository().findOne({
 			where: { id },
-			relations: ['parent'],
+			relations: ['parent', 'user'],
 		});
 
-		if (!comment) {
+		if (!commentReply) {
 			throw new Error();
 		}
 
-		await commentRepository().deleteCommentReply(comment);
+		if (!user) {
+			if (commentReply.password !== password) {
+				return res.status(401).send({ message: '비밀번호가 틀립니다.' });
+			}
+		}
+
+		if (user && commentReply.user.id !== user.id) {
+			return res
+				.status(401)
+				.send({ message: '댓글을 작성한 유저가 아닙니다.' });
+		}
+
+		await commentRepository().deleteCommentReply(commentReply);
 		res.sendStatus(200);
 	} catch (err) {
 		console.log(err);

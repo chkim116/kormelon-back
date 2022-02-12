@@ -8,6 +8,7 @@ import {
 	deleteComment,
 	deleteReply,
 } from '../controller/commentController';
+import { isAuth } from '../middleware/auth';
 
 export const commentRouter = express.Router();
 
@@ -16,11 +17,11 @@ export const commentRouter = express.Router();
  * /post/comment
  */
 
-commentRouter.post('/:id', postCreateComment);
-commentRouter.post('/reply/:id', postCreateReply);
+commentRouter.post('/:id', isAuth, postCreateComment);
+commentRouter.post('/reply/:id', isAuth, postCreateReply);
 
-commentRouter.patch('/:id', patchCreateComment);
-commentRouter.patch('/reply/:id', patchCreateReply);
+commentRouter.patch('/:id', isAuth, patchCreateComment);
+commentRouter.patch('/reply/:id', isAuth, patchCreateReply);
 
-commentRouter.delete('/:id', deleteComment);
-commentRouter.delete('/reply/:id', deleteReply);
+commentRouter.delete('/:id', isAuth, deleteComment);
+commentRouter.delete('/reply/:id', isAuth, deleteReply);

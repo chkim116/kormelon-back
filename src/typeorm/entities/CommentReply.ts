@@ -22,6 +22,12 @@ export class CommentReply {
 	@JoinColumn()
 	parent!: Comment;
 
+	@Column()
+	username!: string;
+
+	@Column()
+	password!: string;
+
 	@Column('timestamptz')
 	@CreateDateColumn()
 	createdAt!: Date;
