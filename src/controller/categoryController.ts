@@ -4,6 +4,33 @@ import {
 	parentCategoryRepository,
 } from '../model/repository/CategoryRepository';
 
+export const getCatogory = async (req: Request, res: Response) => {
+	try {
+		const categories = await parentCategoryRepository().find();
+
+		res.status(200).send(categories);
+	} catch (err) {
+		console.log(err);
+		res.status(400).send({ message: '카테고리를 찾지 못했습니다.' });
+	}
+};
+
+export const getSubCatogory = async (req: Request, res: Response) => {
+	const { id } = req.params;
+	try {
+		const subCategories = await parentCategoryRepository()
+			.findOne({
+				where: { id },
+			})
+			.then((parent) => parent?.categories);
+
+		res.status(200).send(subCategories);
+	} catch (err) {
+		console.log(err);
+		res.status(400).send({ message: '카테고리를 찾지 못했습니다.' });
+	}
+};
+
 // * 상위 카테고리
 export const postCreateParentCategory = async (req: Request, res: Response) => {
 	const { value } = req.body;

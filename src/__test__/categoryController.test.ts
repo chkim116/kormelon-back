@@ -24,6 +24,30 @@ describe('Category test', () => {
 			.findOne({ value })
 			.then((res) => res!.id);
 
+	describe('GET /category', () => {
+		it('상위 카테고리를 가져온다.', async () => {
+			const res = await server.get('/category');
+
+			expect(res.status).toBe(200);
+			expect(res.body.length).toBeTruthy();
+			expect(res.body[0].value).toBe('상위');
+			expect(res.body[0].categories[0].value).toBe('default');
+			expect(res.body[0].categories[0].posts).toEqual([]);
+		});
+	});
+
+	describe('GET /category/:id', () => {
+		it('하위 카테고리를 가져온다.', async () => {
+			const parent = await server.get('/category');
+
+			const res = await server.get(`/category/${parent.body[0].id}`);
+			expect(res.status).toBe(200);
+			expect(res.body.length).toBeTruthy();
+			expect(res.body[0].value).toBe('default');
+			expect(res.body[0].posts).toEqual([]);
+		});
+	});
+
 	describe('POST /category', () => {
 		it('정상적인 상위 카테고리 생성', async () => {
 			const token = await getUserToken(true);

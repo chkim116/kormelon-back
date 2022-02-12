@@ -1,4 +1,5 @@
 import express from 'express';
+
 import {
 	postCreateCategory,
 	patchParentCategory,
@@ -6,6 +7,8 @@ import {
 	patchCategory,
 	deleteParentCategory,
 	deleteCategory,
+	getCatogory,
+	getSubCatogory,
 } from '../controller/categoryController';
 import { isAuth } from '../middleware/auth';
 
@@ -14,6 +17,9 @@ import { isAuth } from '../middleware/auth';
  * /category
  */
 export const categoryRouter = express.Router();
+
+categoryRouter.get('/', getCatogory);
+categoryRouter.get('/:id', getSubCatogory);
 
 categoryRouter.post('/', isAuth, postCreateParentCategory);
 categoryRouter.post('/:id/sub', isAuth, postCreateCategory);
