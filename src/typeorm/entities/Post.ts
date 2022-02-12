@@ -40,7 +40,9 @@ export class Post {
 	@UpdateDateColumn()
 	updatedAt!: Date;
 
-	@OneToMany(() => Comment, (comment) => comment.post)
+	@OneToMany(() => Comment, (comment) => comment.post, {
+		eager: true,
+	})
 	comments!: Comment[];
 
 	@Column('uuid', { name: 'userId' })
@@ -57,7 +59,6 @@ export class Post {
 
 	@ManyToOne(() => Category, (category) => category.posts, {
 		onDelete: 'CASCADE',
-		onUpdate: 'CASCADE',
 	})
 	@JoinColumn({ name: 'categoryId', referencedColumnName: 'id' })
 	category!: Category;

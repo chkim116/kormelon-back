@@ -20,7 +20,9 @@ export class Comment {
 	@Column()
 	text!: string;
 
-	@OneToMany(() => CommentReply, (commentReply) => commentReply.parent)
+	@OneToMany(() => CommentReply, (commentReply) => commentReply.parent, {
+		eager: true,
+	})
 	commentReplies!: CommentReply[];
 
 	@Column('timestamptz')

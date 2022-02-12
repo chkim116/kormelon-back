@@ -1,7 +1,10 @@
 import { Request, Response } from 'express';
 import { validationResult } from 'express-validator';
 
-import { categoryRepository } from '../typeorm/repository/CategoryRepository';
+import {
+	categoryRepository,
+	parentCategoryRepository,
+} from '../typeorm/repository/CategoryRepository';
 import { postRepository } from '../typeorm/repository/PostRepository';
 import { tagRepository } from '../typeorm/repository/TagRepository';
 
@@ -59,8 +62,23 @@ export const postCreate = async (req: Request, res: Response) => {
 			return res.status(401).send({ message: '권한이 없는 유저입니다.' });
 		}
 
-		// create category
-		const category = await categoryRepository().createCategory(data.category);
+		// find category
+		const parent = await parentCategoryRepository().findOne({
+			where: { value: data.parentCategory },
+			relations: ['categories'],
+		});
+
+		if (!parent) {
+			return res.status(400).send({ message: '상위 카테고리가 없습니다.' });
+		}
+
+		const category = parent.categories.filter(
+			(category) => category.value === data.category
+		)[0];
+
+		if (!category) {
+			return res.status(400).send({ message: '하위 카테고리가 없습니다.' });
+		}
 
 		// create tag
 		const postTags = await tagRepository().createTags(data.tags);

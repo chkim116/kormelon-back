@@ -1,6 +1,8 @@
 import { EntityRepository, getCustomRepository, Repository } from 'typeorm';
+
 import { Category } from '../entities/Category';
 import { ParentCategory } from '../entities/ParentCategory';
+import { postRepository } from './PostRepository';
 
 export function categoryRepository() {
 	return getCustomRepository(CategoryRepository, process.env.NODE_ENV);
@@ -31,24 +33,20 @@ export class ParentCategoryRepository extends Repository<ParentCategory> {
 		await this.save({ ...parentCategory, ...update });
 	}
 
-	async deleteParentCategory(id: string) {
-		await this.query(`SET foreign_key_checks = 0;`);
-
-		const sub = await this.findOne({
-			where: { id },
-			relations: ['categories'],
-		});
+	async deleteParentCategory(parentCategory: ParentCategory) {
+		await this.delete({ id: parentCategory.id });
 
 		// onDelete가 먹히지 않아 대신함.
 		const deleteAll =
-			sub?.categories.map(
-				async (category) =>
-					await categoryRepository().delete({ id: category!.id })
-			) || [];
-
+			parentCategory?.categories.map(async (category) => {
+				await categoryRepository().delete({ id: category!.id });
+				await Promise.all(
+					category.posts.map(
+						async (post) => await postRepository().delete({ id: post.id })
+					)
+				);
+			}) || [];
 		await Promise.all(deleteAll);
-
-		await this.delete({ id });
 	}
 }
 
@@ -72,8 +70,13 @@ export class CategoryRepository extends Repository<Category> {
 		return await this.save({ ...category, ...update });
 	}
 
-	async deleteCategory(id: string) {
-		await this.query(`SET foreign_key_checks = 0;`);
-		return await this.delete({ id });
+	async deleteCategory(category: Category) {
+		// onDelete 안되서 직접 삭제
+		const deletePosts = category.posts.map(
+			async (post) => await postRepository().delete({ id: post.id })
+		);
+		await Promise.all(deletePosts);
+
+		return await this.delete({ id: category.id });
 	}
 }

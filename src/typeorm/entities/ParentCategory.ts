@@ -9,6 +9,9 @@ export class ParentCategory {
 	@Column()
 	value!: string;
 
-	@OneToMany(() => Category, (category) => category.parent)
+	@OneToMany(() => Category, (category) => category.parent, {
+		onDelete: 'CASCADE',
+		eager: true,
+	})
 	categories!: Category[];
 }

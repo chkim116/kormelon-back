@@ -76,7 +76,7 @@ export const deleteParentCategory = async (req: Request, res: Response) => {
 			throw new Error('존재하지 않는 상위 카테고리입니다.');
 		}
 
-		await parentCategoryRepository().deleteParentCategory(parentCategory.id);
+		await parentCategoryRepository().deleteParentCategory(parentCategory);
 
 		res.sendStatus(200);
 	} catch (err) {
@@ -166,7 +166,7 @@ export const deleteCategory = async (req: Request, res: Response) => {
 			throw new Error('존재하지 않는 하위 카테고리입니다.');
 		}
 
-		await categoryRepository().deleteCategory(id);
+		await categoryRepository().deleteCategory(category);
 
 		res.sendStatus(200);
 	} catch (err) {

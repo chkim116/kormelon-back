@@ -9,6 +9,7 @@ export interface CreatePostDTO extends Omit<Post, 'tags' | 'category'> {
 	content: string;
 	isPrivate: boolean;
 	// string, not entity
+	parentCategory: string;
 	category: string;
 	tags: string[];
 }
@@ -18,6 +19,7 @@ export interface PatchPostDTO extends Omit<Post, 'tags' | 'category'> {
 	content: string;
 	isPrivate: boolean;
 	// string, not entity
+	parentCategory: string;
 	category: string;
 	tags: string[];
 }

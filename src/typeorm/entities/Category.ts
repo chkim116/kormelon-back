@@ -17,12 +17,16 @@ export class Category {
 	@Column()
 	value!: string;
 
-	@OneToMany(() => Post, (post) => post.category)
+	@OneToMany(() => Post, (post) => post.category, {
+		cascade: true,
+		eager: true,
+	})
 	posts!: Post[];
 
 	@ManyToOne(
 		() => ParentCategory,
-		(parentCategory) => parentCategory.categories
+		(parentCategory) => parentCategory.categories,
+		{ onDelete: 'CASCADE' }
 	)
 	@JoinColumn()
 	parent!: ParentCategory;
