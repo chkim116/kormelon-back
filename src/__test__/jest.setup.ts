@@ -1,5 +1,5 @@
-import { dbConnect, dbClear, dbClose } from './features';
 import { createCategory } from './helper/category';
+import { dbConnect, dbClear, dbClose } from './helper/db';
 import { createAdminUser, createUser } from './helper/user';
 
 console.log("I'll be called first before any test cases run");
