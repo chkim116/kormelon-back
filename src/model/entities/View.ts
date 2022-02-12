@@ -1,13 +1,16 @@
-import { Entity, Column, PrimaryColumn } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
 export class View {
-	@PrimaryColumn()
-	id!: string;
+	@PrimaryGeneratedColumn()
+	id!: number;
 
 	@Column()
 	today!: number;
 
 	@Column()
 	total!: number;
+
+	@Column({ type: 'simple-array' })
+	ips!: string[];
 }
