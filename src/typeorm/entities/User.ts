@@ -24,15 +24,15 @@ export class User {
 	password!: string;
 
 	@Column({ default: false })
-	is_admin!: boolean;
+	isAdmin!: boolean;
 
 	@Column('timestamptz')
 	@CreateDateColumn()
-	created_at!: Date;
+	createdAt!: Date;
 
 	@Column('timestamptz')
 	@UpdateDateColumn()
-	updated_at!: Date;
+	updatedAt!: Date;
 
 	@OneToMany(() => Post, (post) => post.user)
 	posts!: Post[];

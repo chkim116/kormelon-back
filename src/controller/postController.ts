@@ -4,7 +4,6 @@ import { validationResult } from 'express-validator';
 import { categoryRepository } from '../typeorm/repository/CategoryRepository';
 import { postRepository } from '../typeorm/repository/PostRepository';
 import { tagRepository } from '../typeorm/repository/TagRepository';
-import { userRepository } from '../typeorm/repository/UserRepository';
 
 import { CreatePostDTO, PatchPostDTO } from './dto/postController.dto';
 
@@ -46,17 +45,18 @@ export const getPost = async (req: Request, res: Response) => {
 
 export const postCreate = async (req: Request, res: Response) => {
 	const data: CreatePostDTO = req.body;
+	const user = req.user;
+
 	try {
 		// valid
 		const errors = validationResult(req);
 		if (!errors.isEmpty()) {
 			return res.status(400).send({ message: errors.array()[0].msg });
 		}
-		// find user
-		const user = await userRepository().findOne({ where: { id: data.userId } });
 
-		if (!user) {
-			throw new Error('user is not define');
+		// user auth check
+		if (!user?.isAdmin) {
+			return res.status(401).send({ message: '권한이 없는 유저입니다.' });
 		}
 
 		// create category
@@ -84,12 +84,17 @@ export const postCreate = async (req: Request, res: Response) => {
 export const patchPost = async (req: Request, res: Response) => {
 	const updateData: PatchPostDTO = req.body;
 	const { id } = req.params;
+	const user = req.user;
 
 	try {
 		// valid
 		const errors = validationResult(req);
 		if (!errors.isEmpty()) {
 			return res.status(400).send({ message: errors.array()[0].msg });
+		}
+
+		if (!user?.isAdmin) {
+			return res.status(401).send({ message: '권한이 없는 유저입니다.' });
 		}
 
 		// create Category
@@ -114,12 +119,17 @@ export const patchPost = async (req: Request, res: Response) => {
 
 export const deletePost = async (req: Request, res: Response) => {
 	const { id } = req.params;
+	const user = req.user;
 
 	try {
 		const exist = await postRepository().findOne({ id });
 
 		if (!exist) {
 			throw new Error();
+		}
+
+		if (!user?.isAdmin) {
+			return res.status(401).send({ message: '권한이 없는 유저입니다.' });
 		}
 
 		await postRepository().deletePost(id);

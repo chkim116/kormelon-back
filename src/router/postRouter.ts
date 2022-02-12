@@ -8,6 +8,7 @@ import {
 	deletePost,
 	getPosts,
 } from '../controller/postController';
+import { isAuth } from '../middleware/auth';
 
 export const postRouter = express.Router();
 
@@ -26,6 +27,7 @@ postRouter.post(
 		check('content', '본문을 입력해 주세요.').exists().notEmpty(),
 		check('category', '카테고리를 선택해 주세요.').exists().notEmpty(),
 	],
+	isAuth,
 	postCreate
 );
 
@@ -35,7 +37,8 @@ postRouter.patch(
 		check('title', '제목을 입력해 주세요.').exists().notEmpty(),
 		check('category', '카테고리를 선택해 주세요.').exists().notEmpty(),
 	],
+	isAuth,
 	patchPost
 );
 
-postRouter.delete('/:id', deletePost);
+postRouter.delete('/:id', isAuth, deletePost);

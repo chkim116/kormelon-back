@@ -7,7 +7,6 @@ import { Post } from '../../typeorm/entities/Post';
 export interface CreatePostDTO extends Omit<Post, 'tags' | 'category'> {
 	title: string;
 	content: string;
-	userId: string;
 	isPrivate: boolean;
 	// string, not entity
 	category: string;

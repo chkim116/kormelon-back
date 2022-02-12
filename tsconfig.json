@@ -4,8 +4,8 @@
 		"module": "commonjs",
 		"strict": true,
 		"esModuleInterop": true,
-	"downlevelIteration" : true,
-		// for typeorm
+		"downlevelIteration" : true,
+	// for typeorm
 		"emitDecoratorMetadata": true,
 		"experimentalDecorators": true,
 	},

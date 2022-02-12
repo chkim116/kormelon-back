@@ -2,16 +2,28 @@ import request from 'supertest';
 import { getRepository } from 'typeorm';
 import { Post } from '../typeorm/entities/Post';
 
-import { User } from '../typeorm/entities/User';
+import { userRepository } from '../typeorm/repository/UserRepository';
 import { createTestServer, dbClear, dbClose, dbConnect } from './features';
 
-async function getUserId() {
-	const user = new User();
-	user.email = 'chkim116@naver.com';
-	user.username = 'chkim116';
-	user.password = '1';
-	const result = await getRepository(User, process.env.NODE_ENV).save(user);
-	return result.id;
+async function createAdminUser() {
+	await server
+		.post('/user/register')
+		.send({ email: 'chkim116@naver.com', password: '1' });
+}
+
+async function adminUserLogin() {
+	const token = await server
+		.post('/user/login')
+		.send({ email: 'chkim116@naver.com', password: '1' })
+		.then((res) => {
+			return res.header['set-cookie'][0];
+		});
+
+	// Test용 권한 추가
+	const user = await userRepository().findOne({ email: 'chkim116@naver.com' });
+	await userRepository().save({ ...user!, isAdmin: true });
+
+	return token;
 }
 
 const server: request.SuperTest<request.Test> = createTestServer();
@@ -19,7 +31,9 @@ let userId: string;
 
 beforeAll(async () => {
 	await dbConnect();
-	userId = await getUserId();
+	// user 생성
+	await createAdminUser();
+	// userId = await getUserId();
 });
 
 afterAll(async () => {
@@ -37,7 +51,13 @@ describe('Post test', () => {
 
 	describe('POST /post', () => {
 		it('정상적인 컨텐츠 생성', async () => {
-			const res = await server.post('/post').send({ ...mockPost, userId });
+			const token = await adminUserLogin();
+
+			const res = await server
+				.post('/post')
+				.send(mockPost)
+				.set('Cookie', token);
+
 			const post = await getRepository(Post, process.env.NODE_ENV).findOne({
 				where: { title: mockPost.title },
 			});
@@ -47,30 +67,47 @@ describe('Post test', () => {
 		});
 
 		it('제목 빼먹음', async () => {
+			const token = await adminUserLogin();
+
 			const err = await server
 				.post('/post')
-				.send({ ...mockPost, userId, title: '' });
+				.send({ ...mockPost, userId, title: '' })
+				.set('Cookie', token);
 
 			expect(err.status).toEqual(400);
 			expect(err.body.message).toEqual('제목을 입력해 주세요.');
 		});
 
 		it('컨텐츠 빼먹음', async () => {
+			const token = await adminUserLogin();
+
 			const err = await server
 				.post('/post')
-				.send({ ...mockPost, userId, content: '' });
+				.send({ ...mockPost, userId, content: '' })
+				.set('Cookie', token);
 
 			expect(err.status).toEqual(400);
 			expect(err.body.message).toEqual('본문을 입력해 주세요.');
 		});
 
 		it('카테고리 빼먹음', async () => {
+			const token = await adminUserLogin();
+
 			const err = await server
 				.post('/post')
-				.send({ ...mockPost, userId, category: '' });
+				.send({ ...mockPost, userId, category: '' })
+
+				.set('Cookie', token);
 
 			expect(err.status).toEqual(400);
 			expect(err.body.message).toEqual('카테고리를 선택해 주세요.');
+		});
+
+		it('권한 없는 유저가 시도함', async () => {
+			const err = await server.post('/post').send(mockPost);
+
+			expect(err.status).toBe(401);
+			expect(err.body.message).toEqual('권한이 없는 유저입니다.');
 		});
 	});
 
@@ -103,71 +140,123 @@ describe('Post test', () => {
 		const title = '제목';
 		const updateTitle = '제목바뀜';
 		it('정상적인 업데이트', async () => {
+			const token = await adminUserLogin();
+
 			const post = await getRepository(Post, process.env.NODE_ENV).findOne({
 				where: { title },
 			});
 
-			const res = await server.patch(`/post/${post!.id}`).send({
-				title: '제목바뀜',
-				category: '임시2',
-				tags: ['태그1', '태그2', '태그3'],
-			});
+			const res = await server
+				.patch(`/post/${post!.id}`)
+				.send({
+					title: '제목바뀜',
+					category: '임시2',
+					tags: ['태그1', '태그2', '태그3'],
+				})
+				.set('Cookie', token);
 
 			expect(res.status).toBe(200);
 			expect(res.text).toEqual(post!.id);
 		});
 
 		it('잘못된 /:id 요청으로 인한 업데이트 실패', async () => {
-			const err = await server.patch(`/post/${'asd'}`).send({
-				title: '제목바뀜',
-				category: '임시2',
-				tags: ['태그1', '태그2', '태그3'],
-			});
+			const token = await adminUserLogin();
+
+			const err = await server
+				.patch(`/post/${'asd'}`)
+				.send({
+					title: '제목바뀜',
+					category: '임시2',
+					tags: ['태그1', '태그2', '태그3'],
+				})
+				.set('Cookie', token);
 
 			expect(err.status).toBe(400);
 			expect(err.body.message).toBe('업데이트 중 오류가 발생했습니다.');
 		});
 
 		it('제목 빼먹음', async () => {
+			const token = await adminUserLogin();
+
 			const post = await getRepository(Post, process.env.NODE_ENV).findOne({
 				where: { title: updateTitle },
 			});
 
-			const err = await server.patch(`/post/${post!.id}`).send({
-				title: '',
-				category: '임시2',
-			});
+			const err = await server
+				.patch(`/post/${post!.id}`)
+				.send({
+					title: '',
+					category: '임시2',
+				})
+				.set('Cookie', token);
 
 			expect(err.status).toEqual(400);
 			expect(err.body.message).toEqual('제목을 입력해 주세요.');
 		});
 
 		it('카테고리 빼먹음', async () => {
+			const token = await adminUserLogin();
+
+			const post = await getRepository(Post, process.env.NODE_ENV).findOne({
+				where: { title: updateTitle },
+			});
+
+			const err = await server
+				.patch(`/post/${post!.id}`)
+				.send({
+					title: '제목바뀜',
+				})
+				.set('Cookie', token);
+
+			expect(err.status).toEqual(400);
+			expect(err.body.message).toEqual('카테고리를 선택해 주세요.');
+		});
+
+		it('권한 없는 유저가 업데이트를 시도함', async () => {
 			const post = await getRepository(Post, process.env.NODE_ENV).findOne({
 				where: { title: updateTitle },
 			});
 
 			const err = await server.patch(`/post/${post!.id}`).send({
 				title: '제목바뀜',
+				category: '임시2',
+				tags: ['태그1', '태그2', '태그3'],
 			});
-			expect(err.status).toEqual(400);
-			expect(err.body.message).toEqual('카테고리를 선택해 주세요.');
+
+			expect(err.status).toBe(401);
+			expect(err.body.message).toEqual('권한이 없는 유저입니다.');
 		});
 	});
 
 	describe('DELETE /post/:id', () => {
 		const title = '제목바뀜';
-		it('정상적인 삭제', async () => {
+		it('권한 없는 유저가 삭제를 시도함', async () => {
 			const post = await getRepository(Post, process.env.NODE_ENV).findOne({
 				where: { title },
 			});
 
-			const res = await server.delete(`/post/${post!.id}`);
+			const err = await server.delete(`/post/${post!.id}`);
+
+			expect(err.status).toBe(401);
+			expect(err.body.message).toEqual('권한이 없는 유저입니다.');
+		});
+
+		it('정상적인 삭제', async () => {
+			const token = await adminUserLogin();
+
+			const post = await getRepository(Post, process.env.NODE_ENV).findOne({
+				where: { title },
+			});
+
+			const res = await server.delete(`/post/${post!.id}`).set('Cookie', token);
 			expect(res.status).toBe(200);
 		});
 
 		it('삭제 실패', async () => {
-			const err = await server.delete(`/post/${'asd'}`);
+			const token = await adminUserLogin();
+
+			const err = await server.delete(`/post/${'asd'}`).set('Cookie', token);
+
 			expect(err.status).toBe(400);
 			expect(err.body.message).toEqual('삭제 중 오류가 발생했습니다.');
 		});
@@ -178,10 +267,13 @@ describe('Post test', () => {
 		const per = '2';
 
 		beforeAll(async () => {
+			// 3개의 게시글을 임의로 생성합니다.
+			const token = await adminUserLogin();
 			const createPosts = Array.from({ length: 3 }).map(async (_, i) => {
 				return await server
 					.post('/post')
-					.send({ ...mockPost, userId, title: i });
+					.send({ ...mockPost, userId, title: i })
+					.set('Cookie', token);
 			});
 			await Promise.all(createPosts);
 		});

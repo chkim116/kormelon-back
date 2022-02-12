@@ -77,7 +77,7 @@ export const postLogin = async (req: Request, res: Response) => {
 			id: user.id,
 			email: user.email,
 			username: user.username,
-			isAdmin: user.is_admin,
+			isAdmin: user.isAdmin,
 		});
 	} catch (err) {
 		console.log(err);
@@ -116,7 +116,7 @@ export const getAuth = async (req: Request, res: Response) => {
 				id: user.id,
 				email: user.email,
 				username: user.username,
-				isAdmin: user.is_admin,
+				isAdmin: user.isAdmin,
 			});
 		});
 	} catch (err) {

@@ -23,11 +23,11 @@ let userId: string;
 
 beforeAll(async () => {
 	await dbConnect();
-	await dbClear();
 	userId = await getUserId();
 });
 
 afterAll(async () => {
+	await dbClear();
 	await dbClose();
 });
 
