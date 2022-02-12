@@ -5,9 +5,15 @@
 		"strict": true,
 		"esModuleInterop": true,
 		"downlevelIteration" : true,
-	// for typeorm
+		"outDir": "./dist",
+		"noUnusedLocals": true,
+		// for typeorm
 		"emitDecoratorMetadata": true,
 		"experimentalDecorators": true,
 	},
-	"include": ["**/*.ts", "*.ts"]
+	"include": ["**/*.ts", "*.ts"],
+	"exclude" : [
+		"./src/__test__/**/*.ts",
+		"./jest.config.ts"
+	]
 }
