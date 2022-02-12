@@ -2,17 +2,9 @@ import {
 	categoryRepository,
 	parentCategoryRepository,
 } from '../typeorm/repository/CategoryRepository';
-import { dbClear, dbClose, dbConnect } from './features';
-import { getUserToken, server } from './helper/user';
 
-beforeAll(async () => {
-	await dbConnect();
-	await dbClear();
-});
-
-afterAll(async () => {
-	await dbClose();
-});
+import { server } from './helper/server';
+import { getUserToken } from './helper/user';
 
 const parentValue = '상위 카테고리';
 const parentUpdate = '상위 카테고리2';

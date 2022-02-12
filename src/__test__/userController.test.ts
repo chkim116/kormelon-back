@@ -1,17 +1,4 @@
-import request from 'supertest';
-
-import { dbConnect, dbClose, createTestServer, dbClear } from './features';
-
-const server: request.SuperTest<request.Test> = createTestServer();
-
-beforeAll(async () => {
-	await dbConnect();
-	await dbClear();
-});
-
-afterAll(async () => {
-	await dbClose();
-});
+import { server } from './helper/server';
 
 const mockUser = { email: 'abc@gmail.com', password: '123' };
 

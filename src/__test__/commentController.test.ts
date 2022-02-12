@@ -1,72 +1,11 @@
-import request from 'supertest';
 import {
 	commentReplyRepository,
 	commentRepository,
 } from '../typeorm/repository/CommentRepository';
-import { userRepository } from '../typeorm/repository/UserRepository';
 
-import { createTestServer, dbClear, dbClose, dbConnect } from './features';
-
-async function createPost() {
-	const token = await adminUserLogin();
-	const post = await server
-		.post('/post')
-		.send({
-			title: '제목',
-			content: '컨텐츠',
-			category: '임시',
-		})
-		.set('Cookie', token);
-	// text => post의 id값
-	return post.text;
-}
-
-async function createUser(email: string = 'chkim116@naver.com') {
-	await server.post('/user/register').send({ email, password: '1' });
-}
-
-async function userLogin() {
-	const token = await server
-		.post('/user/login')
-		.send({ email: 'c@gmail.com', password: '1' })
-		.then((res) => {
-			return res.header['set-cookie'][0];
-		});
-
-	return token;
-}
-
-async function adminUserLogin() {
-	const token = await server
-		.post('/user/login')
-		.send({ email: 'chkim116@naver.com', password: '1' })
-		.then((res) => {
-			return res.header['set-cookie'][0];
-		});
-
-	// Test용 권한 추가
-	const user = await userRepository().findOne({ email: 'chkim116@naver.com' });
-	await userRepository().save({ ...user!, isAdmin: true });
-
-	return token;
-}
-
-const server: request.SuperTest<request.Test> = createTestServer();
-let userId: string;
-
-beforeAll(async () => {
-	await dbConnect();
-	await dbClear();
-
-	// 댓글용 포스트
-	await createUser();
-	// 비교용 유저
-	await createUser('c@gmail.com');
-});
-
-afterAll(async () => {
-	await dbClose();
-});
+import { getPostId } from './helper/post';
+import { server } from './helper/server';
+import { getUserToken } from './helper/user';
 
 describe('Post comment test', () => {
 	const mockComment = {
@@ -76,8 +15,8 @@ describe('Post comment test', () => {
 
 	describe('POST /post/comment/:id', () => {
 		it('정상적인 댓글 생성', async () => {
-			const token = await adminUserLogin();
-			const postId = await createPost();
+			const token = await getUserToken(true);
+			const postId = await getPostId();
 
 			const res = await server
 				.post(`/post/comment/${postId}`)
@@ -88,7 +27,7 @@ describe('Post comment test', () => {
 		});
 
 		it('익명 유저의 댓글', async () => {
-			const postId = await createPost();
+			const postId = await getPostId();
 
 			// cookie가 없으므로 로그인 상태 X.
 			const res = await server.post(`/post/comment/${postId}`).send({
@@ -104,7 +43,7 @@ describe('Post comment test', () => {
 		it('게시글이 없으면 댓글 생성 하지 않음', async () => {
 			const err = await server
 				.post(`/post/comment/${'asd'}`)
-				.send({ ...mockComment, userId });
+				.send({ ...mockComment });
 
 			expect(err.status).toBe(400);
 			expect(err.body.message).toEqual('댓글 작성 중 오류가 발생했습니다.');
@@ -124,7 +63,7 @@ describe('Post comment test', () => {
 				where: { username: 'chkim116' },
 			});
 
-			const token = await adminUserLogin();
+			const token = await getUserToken(true);
 
 			const res = await server
 				.post(`/post/comment/reply/${parentComment!.id}`)
@@ -137,7 +76,7 @@ describe('Post comment test', () => {
 		it('올바르지 않은 params', async () => {
 			const err = await server
 				.post(`/post/comment/reply/asd`)
-				.send({ text: '대댓글', userId });
+				.send({ text: '대댓글' });
 
 			expect(err.status).toBe(400);
 			expect(err.body.message).toEqual('대댓글 작성 중 오류가 발생했습니다.');
@@ -163,7 +102,7 @@ describe('Post comment test', () => {
 
 	describe('PATCH /post/comment/:id', () => {
 		it('정상적인 댓글 업데이트', async () => {
-			const token = await adminUserLogin();
+			const token = await getUserToken(true);
 
 			const comment = await commentRepository().findOne({
 				where: { text: '멋진 코멘트' },
@@ -212,7 +151,7 @@ describe('Post comment test', () => {
 		});
 
 		it('댓글을 작성한 유저가 아닐때.', async () => {
-			const token = await userLogin();
+			const token = await getUserToken();
 
 			const comment = await commentRepository().findOne({
 				where: { text: '멋진 코멘트2' },
@@ -230,7 +169,7 @@ describe('Post comment test', () => {
 
 	describe('PATCH /post/comment/reply/:id', () => {
 		it('정상적인 대댓글 업데이트', async () => {
-			const token = await adminUserLogin();
+			const token = await getUserToken(true);
 
 			const commentReply = await commentReplyRepository().findOne({
 				where: { text: '대댓글' },
@@ -279,7 +218,7 @@ describe('Post comment test', () => {
 		});
 
 		it('댓글을 작성한 유저가 아닐 때.', async () => {
-			const token = await userLogin();
+			const token = await getUserToken();
 			const commentReply = await commentReplyRepository().findOne({
 				where: { text: '대댓글2' },
 			});
@@ -297,19 +236,13 @@ describe('Post comment test', () => {
 	describe('DELETE /post/comment/:id', () => {
 		beforeEach(async () => {
 			// * 삭제용 데이터입니다. 유저-익명
-			const token = await adminUserLogin();
-			const postId = await createPost();
+			const token = await getUserToken(true);
+			const postId = await getPostId();
+
 			await server
 				.post(`/post/comment/${postId}`)
 				.send({ ...mockComment, text: '삭제용 코멘트' })
 				.set('Cookie', token);
-			await server
-				.post(`/post/comment/${postId}`)
-				.send({ ...mockComment, text: '삭제용 익명 코멘트', password: '1234' });
-
-			const an = await commentRepository().findOne({
-				where: { text: '삭제용 익명 코멘트' },
-			});
 
 			const comment = await commentRepository().findOne({
 				where: { text: '삭제용 코멘트' },
@@ -319,13 +252,23 @@ describe('Post comment test', () => {
 				.post(`/post/comment/reply/${comment!.id}`)
 				.send({ ...mockComment, text: '삭제용 대댓글' })
 				.set('Cookie', token);
+
+			// 익명 관련
+			await server
+				.post(`/post/comment/${postId}`)
+				.send({ ...mockComment, text: '삭제용 익명 코멘트', password: '1234' });
+
+			const an = await commentRepository().findOne({
+				where: { text: '삭제용 익명 코멘트' },
+			});
+
 			await server
 				.post(`/post/comment/reply/${an!.id}`)
 				.send({ ...mockComment, text: '삭제용 익명 대댓글', password: '1234' });
 		});
 
 		it('권한이 없는 유저 삭제 실패', async () => {
-			const token = await userLogin();
+			const token = await getUserToken();
 
 			const comment = await commentRepository().findOne({
 				where: { text: '삭제용 코멘트' },
@@ -353,7 +296,7 @@ describe('Post comment test', () => {
 		});
 
 		it('정상적인 댓글 삭제', async () => {
-			const token = await adminUserLogin();
+			const token = await getUserToken(true);
 			const comment = await commentRepository().findOne({
 				where: { text: '삭제용 코멘트' },
 			});
@@ -387,7 +330,7 @@ describe('Post comment test', () => {
 
 	describe('DELETE /post/comment/reply/:id', () => {
 		it('권한이 없는 유저 대댓글 삭제 실패', async () => {
-			const token = await userLogin();
+			const token = await getUserToken();
 
 			const comment = await commentReplyRepository().findOne({
 				where: { text: '삭제용 대댓글' },
@@ -415,7 +358,7 @@ describe('Post comment test', () => {
 		});
 
 		it('정상적인 유저가 대댓글 삭제', async () => {
-			const token = await adminUserLogin();
+			const token = await getUserToken(true);
 			const comment = await commentReplyRepository().findOne({
 				where: { text: '삭제용 대댓글' },
 			});

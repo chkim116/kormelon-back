@@ -1,58 +1,21 @@
-import request from 'supertest';
 import { getRepository } from 'typeorm';
+
 import { Post } from '../typeorm/entities/Post';
-
-import { userRepository } from '../typeorm/repository/UserRepository';
-import { createTestServer, dbClear, dbClose, dbConnect } from './features';
-
-async function createAdminUser() {
-	await server
-		.post('/user/register')
-		.send({ email: 'chkim116@naver.com', password: '1' });
-}
-
-async function adminUserLogin() {
-	const token = await server
-		.post('/user/login')
-		.send({ email: 'chkim116@naver.com', password: '1' })
-		.then((res) => {
-			return res.header['set-cookie'][0];
-		});
-
-	// Test용 권한 추가
-	const user = await userRepository().findOne({ email: 'chkim116@naver.com' });
-	await userRepository().save({ ...user!, isAdmin: true });
-
-	return token;
-}
-
-const server: request.SuperTest<request.Test> = createTestServer();
-let userId: string;
-
-beforeAll(async () => {
-	await dbConnect();
-	await dbClear();
-
-	// user 생성
-	await createAdminUser();
-	// userId = await getUserId();
-});
-
-afterAll(async () => {
-	await dbClose();
-});
+import { getUserToken } from './helper/user';
+import { server } from './helper/server';
 
 describe('Post test', () => {
 	const mockPost = {
 		title: '제목',
 		content: '컨텐츠',
 		tags: ['태그1'],
+		parentCategory: '상위',
 		category: 'default',
 	};
 
 	describe('POST /post', () => {
 		it('정상적인 컨텐츠 생성', async () => {
-			const token = await adminUserLogin();
+			const token = await getUserToken(true);
 
 			const res = await server
 				.post('/post')
@@ -68,11 +31,11 @@ describe('Post test', () => {
 		});
 
 		it('제목 빼먹음', async () => {
-			const token = await adminUserLogin();
+			const token = await getUserToken(true);
 
 			const err = await server
 				.post('/post')
-				.send({ ...mockPost, userId, title: '' })
+				.send({ ...mockPost, title: '' })
 				.set('Cookie', token);
 
 			expect(err.status).toEqual(400);
@@ -80,11 +43,11 @@ describe('Post test', () => {
 		});
 
 		it('컨텐츠 빼먹음', async () => {
-			const token = await adminUserLogin();
+			const token = await getUserToken(true);
 
 			const err = await server
 				.post('/post')
-				.send({ ...mockPost, userId, content: '' })
+				.send({ ...mockPost, content: '' })
 				.set('Cookie', token);
 
 			expect(err.status).toEqual(400);
@@ -92,11 +55,11 @@ describe('Post test', () => {
 		});
 
 		it('카테고리 빼먹음', async () => {
-			const token = await adminUserLogin();
+			const token = await getUserToken(true);
 
 			const err = await server
 				.post('/post')
-				.send({ ...mockPost, userId, category: '' })
+				.send({ ...mockPost, category: '' })
 
 				.set('Cookie', token);
 
@@ -123,7 +86,7 @@ describe('Post test', () => {
 			expect(res.status).toEqual(200);
 			expect(res.body.title).toEqual('제목');
 			expect(res.body.view).toEqual(1);
-			expect(res.body.category.value).toBe('임시');
+			expect(res.body.category.value).toBe('default');
 			expect(res.body.content).toEqual('컨텐츠');
 			expect(res.body.user.username).toEqual('chkim116');
 			expect(res.body.tags[0].value).toEqual('태그1');
@@ -141,7 +104,7 @@ describe('Post test', () => {
 		const title = '제목';
 		const updateTitle = '제목바뀜';
 		it('정상적인 업데이트', async () => {
-			const token = await adminUserLogin();
+			const token = await getUserToken(true);
 
 			const post = await getRepository(Post, process.env.NODE_ENV).findOne({
 				where: { title },
@@ -151,7 +114,7 @@ describe('Post test', () => {
 				.patch(`/post/${post!.id}`)
 				.send({
 					title: '제목바뀜',
-					category: '임시2',
+					category: 'default',
 					tags: ['태그1', '태그2', '태그3'],
 				})
 				.set('Cookie', token);
@@ -161,13 +124,13 @@ describe('Post test', () => {
 		});
 
 		it('잘못된 /:id 요청으로 인한 업데이트 실패', async () => {
-			const token = await adminUserLogin();
+			const token = await getUserToken(true);
 
 			const err = await server
 				.patch(`/post/${'asd'}`)
 				.send({
 					title: '제목바뀜',
-					category: '임시2',
+					category: 'default',
 					tags: ['태그1', '태그2', '태그3'],
 				})
 				.set('Cookie', token);
@@ -177,7 +140,7 @@ describe('Post test', () => {
 		});
 
 		it('제목 빼먹음', async () => {
-			const token = await adminUserLogin();
+			const token = await getUserToken(true);
 
 			const post = await getRepository(Post, process.env.NODE_ENV).findOne({
 				where: { title: updateTitle },
@@ -187,7 +150,7 @@ describe('Post test', () => {
 				.patch(`/post/${post!.id}`)
 				.send({
 					title: '',
-					category: '임시2',
+					category: 'default',
 				})
 				.set('Cookie', token);
 
@@ -196,7 +159,7 @@ describe('Post test', () => {
 		});
 
 		it('카테고리 빼먹음', async () => {
-			const token = await adminUserLogin();
+			const token = await getUserToken(true);
 
 			const post = await getRepository(Post, process.env.NODE_ENV).findOne({
 				where: { title: updateTitle },
@@ -220,7 +183,7 @@ describe('Post test', () => {
 
 			const err = await server.patch(`/post/${post!.id}`).send({
 				title: '제목바뀜',
-				category: '임시2',
+				category: 'default',
 				tags: ['태그1', '태그2', '태그3'],
 			});
 
@@ -243,7 +206,7 @@ describe('Post test', () => {
 		});
 
 		it('정상적인 삭제', async () => {
-			const token = await adminUserLogin();
+			const token = await getUserToken(true);
 
 			const post = await getRepository(Post, process.env.NODE_ENV).findOne({
 				where: { title },
@@ -254,7 +217,7 @@ describe('Post test', () => {
 		});
 
 		it('삭제 실패', async () => {
-			const token = await adminUserLogin();
+			const token = await getUserToken(true);
 
 			const err = await server.delete(`/post/${'asd'}`).set('Cookie', token);
 
@@ -269,11 +232,11 @@ describe('Post test', () => {
 
 		beforeAll(async () => {
 			// 3개의 게시글을 임의로 생성합니다.
-			const token = await adminUserLogin();
+			const token = await getUserToken(true);
 			const createPosts = Array.from({ length: 3 }).map(async (_, i) => {
 				return await server
 					.post('/post')
-					.send({ ...mockPost, userId, title: i })
+					.send({ ...mockPost, title: i })
 					.set('Cookie', token);
 			});
 			await Promise.all(createPosts);
