@@ -6,3 +6,6 @@ coverage
 
 # build
 dist/
+
+# log
+logs/

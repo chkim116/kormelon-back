@@ -1,6 +1,5 @@
 import express from 'express';
 import cors from 'cors';
-import morgan from 'morgan';
 import helmet from 'helmet';
 import 'reflect-metadata';
 import cookieParser from 'cookie-parser';
@@ -14,12 +13,13 @@ import { categoryRouter } from './router/categoryRouter';
 import { tagRouter } from './router/tagRouter';
 import { checkView, cronTotalView } from './view';
 import { isAuth } from './middleware/auth';
+import morgan from './lib/morgan';
 
 const server = express();
 
 server.use(helmet());
 server.use(cors());
-server.use(morgan('combined'));
+server.use(morgan);
 
 server.use(cookieParser());
 server.use(express.json());

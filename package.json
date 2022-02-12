@@ -9,17 +9,18 @@
 		"build": "rm -rf dist && tsc",
 		"dev": "nodemon",
 		"prestart": "npm run build",
+		"start": "NODE_ENV=production node ./dist/index.js",
 		"typeorm": "node --require ts-node/register ./node_modules/typeorm/cli.js -f ./ormConfig.ts",
 		"migration:create": "npm run typeorm migration:create -c production -d migrations -n migration",
 		"migration:run": "ts-node --transpile-only ./node_modules/typeorm/cli.js migration:run -c production",
-		"migration:revert": "npm run typeorm migration:revert -c production",
-		"start": "NODE_ENV=production node ./dist/index.js"
+		"migration:revert": "npm run typeorm migration:revert -c production"
 	},
 	"dependencies": {
 		"aws-sdk": "2.1073.0",
 		"bcrypt": "5.0.1",
 		"cookie-parser": "1.4.6",
 		"cors": "2.8.5",
+		"dayjs": "1.10.7",
 		"express": "4.17.2",
 		"express-validator": "6.14.0",
 		"helmet": "5.0.2",
@@ -33,7 +34,9 @@
 		"request-ip": "2.1.3",
 		"swagger-jsdoc": "6.1.0",
 		"swagger-ui-express": "4.3.0",
-		"typeorm": "0.2.41"
+		"typeorm": "0.2.41",
+		"winston": "3.5.1",
+		"winston-daily-rotate-file": "4.6.0"
 	},
 	"devDependencies": {
 		"@types/bcrypt": "5.0.0",
