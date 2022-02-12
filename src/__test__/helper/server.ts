@@ -6,6 +6,7 @@ import { commentRouter } from '../../router/commentRouter';
 import { postRouter } from '../../router/postRouter';
 import { userRouter } from '../../router/userRouter';
 import { categoryRouter } from '../../router/categoryRouter';
+import { getTags } from '../../controller/tagController';
 
 const createTestServer = () => {
 	const app = express();
@@ -18,6 +19,8 @@ const createTestServer = () => {
 	app.use('/post', postRouter);
 	app.use('/post/comment', commentRouter);
 	app.use('/category', categoryRouter);
+
+	app.get('/tags', getTags);
 
 	app.get('/ping', (req, res) => {
 		res.sendStatus(200);
