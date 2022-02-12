@@ -6,7 +6,7 @@ import 'reflect-metadata';
 import cookieParser from 'cookie-parser';
 import schedule from 'node-schedule';
 
-import dbCreateConnection from './model/dbCreateConnection';
+import dbCreateConnection from './dbConnection';
 import { userRouter } from './router/userRouter';
 import { postRouter } from './router/postRouter';
 import { commentRouter } from './router/commentRouter';

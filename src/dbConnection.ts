@@ -1,10 +1,8 @@
 import { Connection, createConnection } from 'typeorm';
 
-import config from './ormConfig';
-
-const dbCreateConnection = async (): Promise<Connection | null> => {
+const dbConnection = async (): Promise<Connection | null> => {
 	try {
-		await createConnection(config)
+		await createConnection(process.env.NODE_ENV!)
 			.then((connection) => {
 				console.log(
 					`DB connection success. \nDB: ${connection.options.database}\nNAME: ${connection.name}`
@@ -20,4 +18,4 @@ const dbCreateConnection = async (): Promise<Connection | null> => {
 	return null;
 };
 
-export default dbCreateConnection;
+export default dbConnection;
