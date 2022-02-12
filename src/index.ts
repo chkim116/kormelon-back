@@ -5,7 +5,7 @@ import helmet from 'helmet';
 import 'reflect-metadata';
 import cookieParser from 'cookie-parser';
 
-import dbCreateConnection from './typeorm/dbCreateConnection';
+import dbCreateConnection from './model/dbCreateConnection';
 import { userRouter } from './router/userRouter';
 import { postRouter } from './router/postRouter';
 import { commentRouter } from './router/commentRouter';

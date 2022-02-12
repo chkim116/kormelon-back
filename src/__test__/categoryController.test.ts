@@ -1,7 +1,7 @@
 import {
 	categoryRepository,
 	parentCategoryRepository,
-} from '../typeorm/repository/CategoryRepository';
+} from '../model/repository/CategoryRepository';
 
 import { server } from './helper/server';
 import { getUserToken } from './helper/user';

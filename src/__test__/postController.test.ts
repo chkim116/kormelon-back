@@ -1,6 +1,6 @@
 import { getRepository } from 'typeorm';
 
-import { Post } from '../typeorm/entities/Post';
+import { Post } from '../model/entities/Post';
 import { getUserToken } from './helper/user';
 import { server } from './helper/server';
 

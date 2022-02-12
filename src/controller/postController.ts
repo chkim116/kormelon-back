@@ -4,11 +4,11 @@ import { validationResult } from 'express-validator';
 import {
 	categoryRepository,
 	parentCategoryRepository,
-} from '../typeorm/repository/CategoryRepository';
-import { postRepository } from '../typeorm/repository/PostRepository';
-import { tagRepository } from '../typeorm/repository/TagRepository';
+} from '../model/repository/CategoryRepository';
+import { postRepository } from '../model/repository/PostRepository';
+import { tagRepository } from '../model/repository/TagRepository';
 
-import { CreatePostDTO, PatchPostDTO } from './dto/postController.dto';
+import { CreatePostDTO } from './dto/postController.dto';
 
 export const getPosts = async (req: Request, res: Response) => {
 	const { page, per } = req.query as { page: string; per: string };
@@ -100,7 +100,7 @@ export const postCreate = async (req: Request, res: Response) => {
 };
 
 export const patchPost = async (req: Request, res: Response) => {
-	const updateData: PatchPostDTO = req.body;
+	const updateData: CreatePostDTO = req.body;
 	const { id } = req.params;
 	const user = req.user;
 

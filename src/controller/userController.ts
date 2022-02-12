@@ -1,18 +1,13 @@
 import { Request, Response } from 'express';
 import { validationResult } from 'express-validator';
-import { getCustomRepository } from 'typeorm';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
 
-import { UserRepository } from '../typeorm/repository/UserRepository';
 import { RegisterDTO } from './dto/userController.dto';
+import { userRepository } from '../model/repository/UserRepository';
 
 dotenv.config();
-
-function userRepository() {
-	return getCustomRepository(UserRepository, process.env.NODE_ENV);
-}
 
 function cookieOption() {
 	return {

@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
-import { userRepository } from '../typeorm/repository/UserRepository';
+import { userRepository } from '../model/repository/UserRepository';
 
 export const isAuth = (req: Request, res: Response, next: NextFunction) => {
 	const token = req.cookies.auth;

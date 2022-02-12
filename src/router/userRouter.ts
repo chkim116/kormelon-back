@@ -10,6 +10,11 @@ import {
 
 export const userRouter = express.Router();
 
+/**
+ * prefix
+ * /user
+ */
+
 userRouter.post(
 	'/register',
 	[

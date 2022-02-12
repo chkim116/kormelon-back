@@ -1,6 +1,6 @@
 import { Connection, getConnection } from 'typeorm';
 
-import dbCreateConnection from '../../typeorm/dbCreateConnection';
+import dbCreateConnection from '../../model/dbCreateConnection';
 
 export const dbConnect = async () => await dbCreateConnection();
 

@@ -2,8 +2,8 @@ import { Request, Response } from 'express';
 import {
 	commentReplyRepository,
 	commentRepository,
-} from '../typeorm/repository/CommentRepository';
-import { postRepository } from '../typeorm/repository/PostRepository';
+} from '../model/repository/CommentRepository';
+import { postRepository } from '../model/repository/PostRepository';
 
 import { CreateCommentDTO } from './dto/commentController.dto';
 

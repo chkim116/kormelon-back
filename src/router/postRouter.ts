@@ -12,8 +12,10 @@ import { isAuth } from '../middleware/auth';
 
 export const postRouter = express.Router();
 
-// * prefix /post
-// ! FIX: user middleware
+/**
+ * prefix
+ * /post
+ */
 
 // 전체
 postRouter.get('/', getPosts);

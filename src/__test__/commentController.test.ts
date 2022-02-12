@@ -1,7 +1,7 @@
 import {
 	commentReplyRepository,
 	commentRepository,
-} from '../typeorm/repository/CommentRepository';
+} from '../model/repository/CommentRepository';
 
 import { getPostId } from './helper/post';
 import { server } from './helper/server';

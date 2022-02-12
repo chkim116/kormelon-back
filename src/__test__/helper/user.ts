@@ -1,4 +1,4 @@
-import { userRepository } from '../../typeorm/repository/UserRepository';
+import { userRepository } from '../../model/repository/UserRepository';
 import { server } from './server';
 
 // 관리자용으로 사용할 아이디 생성

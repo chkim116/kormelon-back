@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import {
 	categoryRepository,
 	parentCategoryRepository,
-} from '../typeorm/repository/CategoryRepository';
+} from '../model/repository/CategoryRepository';
 
 // * 상위 카테고리
 export const postCreateParentCategory = async (req: Request, res: Response) => {
