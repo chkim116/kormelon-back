@@ -6,10 +6,10 @@ const server: request.SuperTest<request.Test> = createTestServer();
 
 beforeAll(async () => {
 	await dbConnect();
+	await dbClear();
 });
 
 afterAll(async () => {
-	await dbClear();
 	await dbClose();
 });
 

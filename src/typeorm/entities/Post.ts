@@ -56,7 +56,8 @@ export class Post {
 	categoryId!: string;
 
 	@ManyToOne(() => Category, (category) => category.posts, {
-		cascade: ['insert'],
+		onDelete: 'CASCADE',
+		onUpdate: 'CASCADE',
 	})
 	@JoinColumn({ name: 'categoryId', referencedColumnName: 'id' })
 	category!: Category;

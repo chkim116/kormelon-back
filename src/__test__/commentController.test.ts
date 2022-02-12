@@ -56,6 +56,7 @@ let userId: string;
 
 beforeAll(async () => {
 	await dbConnect();
+	await dbClear();
 
 	// 댓글용 포스트
 	await createUser();
@@ -64,7 +65,6 @@ beforeAll(async () => {
 });
 
 afterAll(async () => {
-	await dbClear();
 	await dbClose();
 });
 

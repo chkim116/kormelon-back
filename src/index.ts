@@ -9,6 +9,7 @@ import dbCreateConnection from './typeorm/dbCreateConnection';
 import { userRouter } from './router/userRouter';
 import { postRouter } from './router/postRouter';
 import { commentRouter } from './router/commentRouter';
+import { categoryRouter } from './router/categoryRouter';
 
 const server = express();
 
@@ -23,6 +24,7 @@ server.use(express.urlencoded({ extended: true }));
 server.use('/user', userRouter);
 server.use('/post', postRouter);
 server.use('/post/comment', commentRouter);
+server.use('/category', categoryRouter);
 
 server.listen(4000, () => {
 	console.log('http://localhost:4000');

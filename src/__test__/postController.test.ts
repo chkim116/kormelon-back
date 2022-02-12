@@ -31,13 +31,14 @@ let userId: string;
 
 beforeAll(async () => {
 	await dbConnect();
+	await dbClear();
+
 	// user 생성
 	await createAdminUser();
 	// userId = await getUserId();
 });
 
 afterAll(async () => {
-	await dbClear();
 	await dbClose();
 });
 
@@ -46,7 +47,7 @@ describe('Post test', () => {
 		title: '제목',
 		content: '컨텐츠',
 		tags: ['태그1'],
-		category: '임시',
+		category: 'default',
 	};
 
 	describe('POST /post', () => {
