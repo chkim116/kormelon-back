@@ -1,6 +1,6 @@
-import { createCategory } from './helper/category';
-import { dbConnect, dbClear, dbClose } from './helper/db';
-import { createAdminUser, createUser } from './helper/user';
+import { createCategory } from './src/__test__/helper/category';
+import { dbConnect, dbClear, dbClose } from './src/__test__/helper/db';
+import { createAdminUser, createUser } from './src/__test__/helper/user';
 
 console.log("I'll be called first before any test cases run");
 

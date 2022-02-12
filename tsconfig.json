@@ -7,6 +7,7 @@
 		"downlevelIteration" : true,
 		"outDir": "./dist",
 		"noUnusedLocals": true,
+		"removeComments": true,
 		// for typeorm
 		"emitDecoratorMetadata": true,
 		"experimentalDecorators": true,
@@ -14,6 +15,6 @@
 	"include": ["**/*.ts", "*.ts"],
 	"exclude" : [
 		"./src/__test__/**/*.ts",
-		"./jest.config.ts"
+		"./jest.*.ts",
 	]
 }
