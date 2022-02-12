@@ -7,8 +7,10 @@ import {
 	patchPost,
 	deletePost,
 	getPosts,
+	postImg,
 } from '../controller/postController';
 import { isAuth } from '../middleware/auth';
+import { uploadImage } from '../multer';
 
 export const postRouter = express.Router();
 
@@ -44,3 +46,6 @@ postRouter.patch(
 );
 
 postRouter.delete('/:id', isAuth, deletePost);
+
+// 테스트 하지 않음. AWS KEY 필요.
+postRouter.post('/img', uploadImage, postImg);

@@ -157,3 +157,14 @@ export const deletePost = async (req: Request, res: Response) => {
 		res.status(400).send({ message: '삭제 중 오류가 발생했습니다.' });
 	}
 };
+
+export const postImg = (req: Request, res: Response) => {
+	const { file } = req;
+	const location = (file as any).location;
+	try {
+		res.status(200).send(location);
+	} catch (err) {
+		console.log(err);
+		res.status(400).send(err);
+	}
+};
