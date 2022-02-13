@@ -5,7 +5,12 @@ dotenv.config();
 
 const defaultConfig = {
 	logging: false,
-	entities: ['**/entities/*.{js,ts}'],
+	entities: ['./model/entities/*.{js,ts}'],
+	migrations: ['./model/migration/*.ts'],
+	cli: {
+		entitiesDir: 'src/model/entity',
+		migrationsDir: 'src/model/migration',
+	},
 };
 
 const connections: ConnectionOptions[] = [
