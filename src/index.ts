@@ -1,4 +1,4 @@
-import express from 'express';
+import express, { Response } from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
 import 'reflect-metadata';
@@ -37,6 +37,10 @@ server.get('/view', isAuth, checkView);
 
 schedule.scheduleJob('0 0 0 * * *', cronTotalView as any);
 // ====== 조회수 관련 끝 ===== //
+
+server.get('/', (_, res: Response) => {
+	res.send('welcome');
+});
 
 server.listen(4000, () => {
 	console.log('http://localhost:4000');

@@ -3,7 +3,6 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
-console.log(__dirname);
 const defaultConfig = {
 	logging: false,
 	entities: [__dirname + '/model/entities/*.{js,ts}'],
