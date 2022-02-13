@@ -6,7 +6,7 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 const s3 = new aws.S3({
-	secretAccessKey: process.env.AWS_SECRET_KEY!,
+	secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY!,
 	accessKeyId: process.env.AWS_ACCESS_KEY_ID!,
 	region: 'ap-northeast-2',
 });
