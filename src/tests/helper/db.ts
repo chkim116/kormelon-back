@@ -1,8 +1,8 @@
 import { Connection, getConnection } from 'typeorm';
 
-import dbCreateConnection from '../../dbConnection';
+import dbConnection from '../../dbConnection';
 
-export const dbConnect = async () => await dbCreateConnection();
+export const dbConnect = async () => await dbConnection();
 
 export const dbClose = async () =>
 	await getConnection(process.env.NODE_ENV).close();

@@ -3,10 +3,11 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
+console.log(__dirname);
 const defaultConfig = {
 	logging: false,
-	entities: ['./model/entities/*.{js,ts}'],
-	migrations: ['./model/migration/*.ts'],
+	entities: [__dirname + '/model/entities/*.{js,ts}'],
+	migrations: [__dirname + '/model/migration/*.{js,ts}'],
 	cli: {
 		entitiesDir: 'src/model/entity',
 		migrationsDir: 'src/model/migration',
