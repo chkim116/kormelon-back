@@ -1,4 +1,6 @@
 import { Request, Response } from 'express';
+
+import logger from '../lib/logger';
 import {
 	commentReplyRepository,
 	commentRepository,
@@ -32,7 +34,7 @@ export const postCreateComment = async (req: Request, res: Response) => {
 		});
 		res.sendStatus(201);
 	} catch (err) {
-		console.log(err);
+		logger.error(err);
 		res.status(400).send({ message: '댓글 작성 중 오류가 발생했습니다.' });
 	}
 };
@@ -66,7 +68,7 @@ export const postCreateReply = async (req: Request, res: Response) => {
 
 		res.sendStatus(201);
 	} catch (err) {
-		console.log(err);
+		logger.error(err);
 		res.status(400).send({ message: '대댓글 작성 중 오류가 발생했습니다.' });
 	}
 };
@@ -102,7 +104,7 @@ export const patchCreateComment = async (req: Request, res: Response) => {
 
 		res.sendStatus(200);
 	} catch (err) {
-		console.log(err);
+		logger.error(err);
 		res.status(400).send({ message: '변경 중 오류가 발생했습니다.' });
 	}
 };
@@ -138,7 +140,7 @@ export const patchCreateReply = async (req: Request, res: Response) => {
 
 		res.sendStatus(200);
 	} catch (err) {
-		console.log(err);
+		logger.error(err);
 		res.status(400).send({ message: '변경 중 오류가 발생했습니다.' });
 	}
 };
@@ -173,7 +175,7 @@ export const deleteComment = async (req: Request, res: Response) => {
 		await commentRepository().deleteComment(comment);
 		res.sendStatus(200);
 	} catch (err) {
-		console.log(err);
+		logger.error(err);
 		res.status(400).send({ message: '삭제 중 오류가 발생했습니다.' });
 	}
 };
@@ -208,7 +210,7 @@ export const deleteReply = async (req: Request, res: Response) => {
 		await commentRepository().deleteCommentReply(commentReply);
 		res.sendStatus(200);
 	} catch (err) {
-		console.log(err);
+		logger.error(err);
 		res.status(400).send({ message: '삭제 중 오류가 발생했습니다.' });
 	}
 };

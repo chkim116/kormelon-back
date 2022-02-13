@@ -1,4 +1,6 @@
 import { Response, Request } from 'express';
+
+import logger from '../lib/logger';
 import { tagRepository } from '../model/repository/TagRepository';
 
 export const getTags = async (req: Request, res: Response) => {
@@ -15,7 +17,7 @@ export const getTags = async (req: Request, res: Response) => {
 
 		res.status(200).send(results);
 	} catch (err) {
-		console.log(err);
+		logger.error(err);
 		res
 			.status(400)
 			.send({ message: '태그를 불러오는 중 오류가 발생했습니다.' });

@@ -6,6 +6,7 @@ import dotenv from 'dotenv';
 
 import { RegisterDTO } from './dto/userController.dto';
 import { userRepository } from '../model/repository/UserRepository';
+import logger from '../lib/logger';
 
 dotenv.config();
 
@@ -45,7 +46,7 @@ export const postRegister = async (req: Request, res: Response) => {
 		await userRepository().save(user);
 		res.sendStatus(201);
 	} catch (err) {
-		console.log(err);
+		logger.error(err);
 		res.status(400).send({ message: '회원가입 중 에러가 발생했습니다.' });
 	}
 };
@@ -75,7 +76,7 @@ export const postLogin = async (req: Request, res: Response) => {
 			isAdmin: user.isAdmin,
 		});
 	} catch (err) {
-		console.log(err);
+		logger.error(err);
 		res.status(401).send({ message: '존재하지 않는 유저입니다.' });
 	}
 
@@ -115,7 +116,7 @@ export const getAuth = async (req: Request, res: Response) => {
 			});
 		});
 	} catch (err) {
-		console.log(err);
+		logger.error(err);
 		res.sendStatus(401);
 	}
 };
@@ -124,7 +125,7 @@ export const postLogout = async (req: Request, res: Response) => {
 	try {
 		res.cookie('auth', '', { maxAge: 0 }).sendStatus(200);
 	} catch (err) {
-		console.log(err);
+		logger.error(err);
 		res.sendStatus(400);
 	}
 };

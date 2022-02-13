@@ -1,6 +1,8 @@
 import { Request, Response } from 'express';
 import { validationResult } from 'express-validator';
 
+import logger from '../lib/logger';
+
 import {
 	categoryRepository,
 	parentCategoryRepository,
@@ -20,7 +22,7 @@ export const getPosts = async (req: Request, res: Response) => {
 
 		res.status(200).send(posts);
 	} catch (err) {
-		console.log(err);
+		logger.error(err);
 		res
 			.status(400)
 			.send({ message: '게시글을 불러오는 중 오류가 발생했습니다.' });
@@ -39,7 +41,7 @@ export const getPost = async (req: Request, res: Response) => {
 
 		res.status(200).send(post);
 	} catch (err) {
-		console.log(err);
+		logger.error(err);
 		res
 			.status(400)
 			.send({ message: '게시글을 불러오는 중 오류가 발생했습니다.' });
@@ -94,7 +96,7 @@ export const postCreate = async (req: Request, res: Response) => {
 
 		res.status(201).send(postId);
 	} catch (err) {
-		console.log(err);
+		logger.error(err);
 		res.status(400).send({ message: '작성 중 오류가 발생했습니다.' });
 	}
 };
@@ -164,7 +166,7 @@ export const postImg = (req: Request, res: Response) => {
 	try {
 		res.status(200).send(location);
 	} catch (err) {
-		console.log(err);
+		logger.error(err);
 		res.status(400).send(err);
 	}
 };

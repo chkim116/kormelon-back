@@ -1,4 +1,6 @@
 import { Request, Response } from 'express';
+
+import logger from '../lib/logger';
 import {
 	categoryRepository,
 	parentCategoryRepository,
@@ -10,7 +12,7 @@ export const getCatogory = async (req: Request, res: Response) => {
 
 		res.status(200).send(categories);
 	} catch (err) {
-		console.log(err);
+		logger.error(err);
 		res.status(400).send({ message: '카테고리를 찾지 못했습니다.' });
 	}
 };
@@ -26,7 +28,7 @@ export const getSubCatogory = async (req: Request, res: Response) => {
 
 		res.status(200).send(subCategories);
 	} catch (err) {
-		console.log(err);
+		logger.error(err);
 		res.status(400).send({ message: '카테고리를 찾지 못했습니다.' });
 	}
 };
@@ -49,7 +51,7 @@ export const postCreateParentCategory = async (req: Request, res: Response) => {
 
 		res.sendStatus(201);
 	} catch (err) {
-		console.log(err);
+		logger.error(err);
 		res
 			.status(400)
 			.send({ message: '상위 카테고리 생성 중 오류가 발생했습니다.' });
@@ -79,7 +81,7 @@ export const patchParentCategory = async (req: Request, res: Response) => {
 
 		res.sendStatus(200);
 	} catch (err) {
-		console.log(err);
+		logger.error(err);
 		res
 			.status(400)
 			.send({ message: '상위 카테고리 수정 중 오류가 발생했습니다.' });
@@ -107,7 +109,7 @@ export const deleteParentCategory = async (req: Request, res: Response) => {
 
 		res.sendStatus(200);
 	} catch (err) {
-		console.log(err);
+		logger.error(err);
 		res
 			.status(400)
 			.send({ message: '상위 카테고리 삭제 중 오류가 발생했습니다.' });
@@ -143,7 +145,7 @@ export const postCreateCategory = async (req: Request, res: Response) => {
 
 		res.sendStatus(201);
 	} catch (err) {
-		console.log(err);
+		logger.error(err);
 		res
 			.status(400)
 			.send({ message: '하위 카테고리 생성 중 오류가 발생했습니다.' });
@@ -169,7 +171,7 @@ export const patchCategory = async (req: Request, res: Response) => {
 		await categoryRepository().updateCategory(category, value);
 		res.sendStatus(200);
 	} catch (err) {
-		console.log(err);
+		logger.error(err);
 		res
 			.status(400)
 			.send({ message: '하위 카테고리 수정 중 오류가 발생했습니다.' });
@@ -197,7 +199,7 @@ export const deleteCategory = async (req: Request, res: Response) => {
 
 		res.sendStatus(200);
 	} catch (err) {
-		console.log(err);
+		logger.error(err);
 		res
 			.status(400)
 			.send({ message: '하위 카테고리 삭제 중 오류가 발생했습니다.' });
