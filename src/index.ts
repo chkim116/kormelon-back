@@ -18,7 +18,12 @@ import morgan from './lib/morgan';
 const server = express();
 
 server.use(helmet());
-server.use(cors());
+server.use(
+	cors({
+		origin: true,
+		credentials: true,
+	})
+);
 server.use(morgan);
 
 server.use(cookieParser());
