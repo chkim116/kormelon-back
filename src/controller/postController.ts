@@ -167,6 +167,6 @@ export const postImg = (req: Request, res: Response) => {
 		res.status(200).send(location);
 	} catch (err) {
 		logger.error(err);
-		res.status(400).send(err);
+		res.status(400).send({ message: '이미지 처리 중 오류가 발생했습니다.' });
 	}
 };

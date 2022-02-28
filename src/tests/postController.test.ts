@@ -86,6 +86,7 @@ describe('Post test', () => {
 			expect(res.status).toEqual(200);
 			expect(res.body.title).toEqual('제목');
 			expect(res.body.view).toEqual(1);
+			expect(res.body.category.parentValue).toBe('상위');
 			expect(res.body.category.value).toBe('default');
 			expect(res.body.content).toEqual('컨텐츠');
 			expect(res.body.user.username).toEqual('chkim116');
@@ -94,7 +95,7 @@ describe('Post test', () => {
 		});
 
 		it('포스트 리드 실패', async () => {
-			const err = await server.get('/post/213');
+			const err = await server.get('/post/ax213');
 			expect(err.status).toBe(400);
 			expect(err.body.message).toEqual('존재하지 않는 게시글입니다.');
 		});
