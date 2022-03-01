@@ -18,7 +18,7 @@ export class PostRepository extends Repository<Post> {
 	async findById(id: string) {
 		const result = await this.findOne({
 			where: { id },
-			relations: ['category', 'category.parent', 'user', 'tags', 'comments'],
+			relations: ['category', 'category.parent', 'tags', 'comments'],
 		});
 
 		if (!result) {
@@ -29,7 +29,7 @@ export class PostRepository extends Repository<Post> {
 		await this.save(result);
 
 		const category = {
-			id: result?.categoryId,
+			id: result?.category.id,
 			value: result?.category.value,
 			parentId: result?.category.parent.id,
 			parentValue: result?.category.parent.value,
@@ -61,7 +61,7 @@ export class PostRepository extends Repository<Post> {
 				isPrivate,
 				createdAt,
 				category: {
-					id: result.categoryId,
+					id: result.category.id,
 					value: result.category.value,
 					parentId: result.category.parent.id,
 					parentValue: result.category.parent.value,

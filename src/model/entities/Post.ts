@@ -45,22 +45,14 @@ export class Post {
 	})
 	comments!: Comment[];
 
-	@Column('uuid', { name: 'userId' })
-	userId!: string;
-
 	@ManyToOne(() => User, (user) => user.posts, {
 		cascade: ['insert'],
 	})
 	@JoinColumn({ name: 'userId', referencedColumnName: 'id' })
 	user!: User;
 
-	@Column('uuid', { name: 'categoryId' })
-	categoryId!: string;
-
-	@ManyToOne(() => Category, (category) => category.posts, {
-		onDelete: 'CASCADE',
-	})
-	@JoinColumn({ name: 'categoryId', referencedColumnName: 'id' })
+	@ManyToOne(() => Category, (category) => category.posts)
+	@JoinColumn()
 	category!: Category;
 
 	@ManyToMany(() => Tag, (tag) => tag.posts, {
