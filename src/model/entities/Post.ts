@@ -45,6 +45,9 @@ export class Post {
 	})
 	comments!: Comment[];
 
+	@Column('uuid', { name: 'userId' })
+	userId!: string;
+
 	@ManyToOne(() => User, (user) => user.posts, {
 		cascade: ['insert'],
 	})
