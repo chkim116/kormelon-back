@@ -80,11 +80,12 @@ export class PostRepository extends Repository<Post> {
 
 	async updatePost(id: string, updateData: Post) {
 		const post = await this.findOne({ id });
+		const newPost = this.create({ ...updateData });
 
 		// update
 		const result = await this.save({
 			...post,
-			...updateData,
+			...newPost,
 		});
 
 		return result.id;

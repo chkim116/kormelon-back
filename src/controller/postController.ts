@@ -118,9 +118,13 @@ export const patchPost = async (req: Request, res: Response) => {
 		}
 
 		// create Category
-		const category = await categoryRepository().createCategory(
-			updateData.category
-		);
+		const category = await categoryRepository().findOne({
+			value: updateData.category,
+		});
+
+		if (!category) {
+			return res.status(400).send({ message: '없는 카테고리 입니다.' });
+		}
 
 		// create tag
 		const postTags = await tagRepository().createTags(updateData.tags);

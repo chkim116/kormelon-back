@@ -53,11 +53,6 @@ export class ParentCategoryRepository extends Repository<ParentCategory> {
 // 하위 카테고리
 @EntityRepository(Category)
 export class CategoryRepository extends Repository<Category> {
-	async createCategory(value: string) {
-		const category = this.create({ value });
-		return await this.save(category);
-	}
-
 	async addCategory(parent: ParentCategory, value: string) {
 		// parent 필수.
 		const category = this.create({ value, parent });
