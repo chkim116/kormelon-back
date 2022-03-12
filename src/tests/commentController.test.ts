@@ -98,6 +98,21 @@ describe('Post comment test', () => {
 
 			expect(res.status).toBe(201);
 		});
+
+		it('익명 유저가 아무 입력 없이 대댓글 생성', async () => {
+			const parentComment = await commentRepository().findOne({
+				where: { text: '멋진 코멘트' },
+			});
+
+			// cookie가 없으므로 익명이다.
+			const res = await server
+				.post(`/post/comment/reply/${parentComment!.id}`)
+				.send({
+					text: '비번없는 익명 대댓글',
+				});
+
+			expect(res.status).toBe(201);
+		});
 	});
 
 	describe('PATCH /post/comment/:id', () => {

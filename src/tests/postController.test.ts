@@ -89,7 +89,6 @@ describe('Post test', () => {
 			expect(res.body.category.parentValue).toBe('상위');
 			expect(res.body.category.value).toBe('default');
 			expect(res.body.content).toEqual('컨텐츠');
-			expect(res.body.user.username).toEqual('chkim116');
 			expect(res.body.tags[0].value).toEqual('태그1');
 			expect(res.body.comments).toEqual([]);
 		});
