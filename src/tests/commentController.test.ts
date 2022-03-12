@@ -9,7 +9,6 @@ import { getUserToken } from './helper/user';
 
 describe('Post comment test', () => {
 	const mockComment = {
-		postTitle: '제목',
 		text: '멋진 코멘트',
 	};
 
