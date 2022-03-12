@@ -98,7 +98,7 @@ describe('User test', () => {
 
 		it('쿠키 포함이 되지 않은 요청 시', async () => {
 			const err = await server.get('/user/auth');
-			expect(err.body).toEqual(false);
+			expect(err.status).toEqual(401);
 		});
 	});
 
