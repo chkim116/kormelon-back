@@ -36,6 +36,9 @@ export class Comment {
 	@Column('date', { default: null })
 	deletedAt!: Date | null;
 
+	@Column({ default: false })
+	isAnonymous!: boolean;
+
 	@ManyToOne(() => User, (user) => user.comments)
 	@JoinColumn()
 	user!: User;

@@ -31,6 +31,7 @@ export const postCreateComment = async (req: Request, res: Response) => {
 			user,
 			text,
 			creator,
+			isAnonymous: !user,
 		});
 		res.sendStatus(201);
 	} catch (err) {
@@ -64,6 +65,7 @@ export const postCreateReply = async (req: Request, res: Response) => {
 			user,
 			text,
 			creator,
+			isAnonymous: !user,
 		});
 
 		res.sendStatus(201);
@@ -156,6 +158,8 @@ export const deleteComment = async (req: Request, res: Response) => {
 			relations: ['user'],
 		});
 
+		// TODO: 관리자면 삭제 가능하게
+
 		if (!comment) {
 			throw new Error();
 		}
@@ -190,6 +194,8 @@ export const deleteReply = async (req: Request, res: Response) => {
 			where: { id },
 			relations: ['parent', 'user'],
 		});
+
+		// TODO: 관리자면 삭제 가능하게
 
 		if (!commentReply) {
 			throw new Error();

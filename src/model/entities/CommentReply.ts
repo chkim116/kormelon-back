@@ -36,6 +36,9 @@ export class CommentReply {
 	@UpdateDateColumn()
 	updatedAt!: Date;
 
+	@Column({ default: false })
+	isAnonymous!: boolean;
+
 	@ManyToOne(() => User, (user) => user.comments)
 	@JoinColumn()
 	user!: User;

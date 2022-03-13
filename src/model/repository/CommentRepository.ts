@@ -22,6 +22,7 @@ interface CreateComment {
 	post: Post;
 	user?: User;
 	text: string;
+	isAnonymous: boolean;
 	creator: { username: string; password: string };
 }
 
@@ -29,18 +30,20 @@ interface CreateCommentReply {
 	comment: Comment;
 	user?: User;
 	text: string;
+	isAnonymous: boolean;
 	creator: { username: string; password: string };
 }
 
 @EntityRepository(Comment)
 export class CommentRepository extends Repository<Comment> {
 	async createComment(data: CreateComment) {
-		const { post, user, text, creator } = data;
+		const { post, user, text, creator, isAnonymous } = data;
 
 		const comment = this.create({
 			text,
 			user,
 			...creator,
+			isAnonymous,
 			commentReplies: [],
 			post,
 		});
@@ -61,21 +64,26 @@ export class CommentRepository extends Repository<Comment> {
 	}
 
 	async deleteComment(prevComment: Comment) {
-		const deleteComment = this.create({
-			text: '삭제된 댓글입니다.',
-			deletedAt: new Date(),
-		});
+		if (prevComment.commentReplies.length) {
+			const deleteComment = this.create({
+				text: '삭제된 댓글입니다.',
+				deletedAt: new Date(),
+			});
 
-		await this.save({ ...prevComment, ...deleteComment });
+			return await this.save({ ...prevComment, ...deleteComment });
+		}
+
+		await this.delete(prevComment.id);
 	}
 
 	async createCommentReply(data: CreateCommentReply) {
-		const { comment: parent, creator, text, user } = data;
+		const { comment: parent, creator, text, user, isAnonymous } = data;
 		// reply 생성
 		const commentReply = commentReplyRepository().create({
 			text,
 			user,
 			parent,
+			isAnonymous,
 			...creator,
 		});
 
