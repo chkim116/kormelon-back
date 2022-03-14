@@ -87,7 +87,7 @@ export const getAuth = async (req: Request, res: Response) => {
 	const token = req.cookies.auth;
 
 	if (!token) {
-		return res.status(401);
+		return res.sendStatus(401);
 	}
 
 	try {
