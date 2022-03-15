@@ -37,7 +37,7 @@ interface CreateCommentReply {
 @EntityRepository(Comment)
 export class CommentRepository extends Repository<Comment> {
 	async createComment(data: CreateComment) {
-		const { post, user, text, creator, isAnonymous } = data;
+		const { post, user = null, text, creator, isAnonymous } = data;
 
 		const comment = this.create({
 			text,
@@ -48,7 +48,7 @@ export class CommentRepository extends Repository<Comment> {
 			post,
 		});
 
-		await this.save(comment);
+		return await this.save(comment);
 	}
 
 	async updateComment(id: string, text: string) {
@@ -77,15 +77,17 @@ export class CommentRepository extends Repository<Comment> {
 	}
 
 	async createCommentReply(data: CreateCommentReply) {
-		const { comment: parent, creator, text, user, isAnonymous } = data;
+		const { comment: parent, creator, text, user = null, isAnonymous } = data;
 		// reply 생성
-		const commentReply = commentReplyRepository().create({
+		const newCommentReply = commentReplyRepository().create({
 			text,
 			user,
 			parent,
 			isAnonymous,
 			...creator,
 		});
+
+		const commentReply = await commentReplyRepository().save(newCommentReply);
 
 		// 결합
 		const commentReplies = parent.commentReplies
@@ -98,7 +100,8 @@ export class CommentRepository extends Repository<Comment> {
 		});
 
 		await this.save(result);
-		await commentReplyRepository().save(commentReply);
+
+		return commentReply;
 	}
 
 	async updateCommentReply(id: string, text: string) {

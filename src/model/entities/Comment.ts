@@ -39,9 +39,9 @@ export class Comment {
 	@Column({ default: false })
 	isAnonymous!: boolean;
 
-	@ManyToOne(() => User, (user) => user.comments)
+	@ManyToOne(() => User, (user) => user.comments, { eager: true })
 	@JoinColumn()
-	user!: User;
+	user!: User | null;
 
 	@Column()
 	username!: string;

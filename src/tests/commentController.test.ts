@@ -23,6 +23,7 @@ describe('Post comment test', () => {
 				.set('Cookie', token);
 
 			expect(res.status).toBe(201);
+			expect(res.body.text).toBe('멋진 코멘트');
 		});
 
 		it('익명 유저의 댓글', async () => {
@@ -37,6 +38,7 @@ describe('Post comment test', () => {
 			});
 
 			expect(res.status).toBe(201);
+			expect(res.body.text).toBe('멋진 익명 코멘트');
 		});
 
 		it('게시글이 없으면 댓글 생성 하지 않음', async () => {
@@ -70,6 +72,7 @@ describe('Post comment test', () => {
 				.set('Cookie', token);
 
 			expect(res.status).toBe(201);
+			expect(res.body.text).toBe('대댓글');
 		});
 
 		it('올바르지 않은 params', async () => {
@@ -111,6 +114,7 @@ describe('Post comment test', () => {
 				});
 
 			expect(res.status).toBe(201);
+			expect(res.body.text).toBe('비번없는 익명 대댓글');
 		});
 	});
 
@@ -298,7 +302,7 @@ describe('Post comment test', () => {
 
 		it('익명 댓글 비밀번호 틀려서 삭제 실패', async () => {
 			const comment = await commentRepository().findOne({
-				where: { text: '삭제용 코멘트' },
+				where: { text: '삭제용 익명 코멘트' },
 			});
 
 			const err = await server
