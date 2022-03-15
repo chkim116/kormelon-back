@@ -2,7 +2,6 @@ import { EntityRepository, getCustomRepository, Repository } from 'typeorm';
 import readingTime from 'reading-time';
 
 import { Post } from '../entities/Post';
-
 import dayjs from 'dayjs';
 
 export function postRepository() {
@@ -37,22 +36,34 @@ export class PostRepository extends Repository<Post> {
 			parentValue: result?.category.parent.value,
 		};
 
-		// TODO: 개선 필요
-		let sortComments: any[] = [];
-		result.comments.forEach((comment) =>
-			sortComments.push(
-				comment.commentReplies.sort(
-					(a, b) => dayjs(a.createdAt).valueOf() - dayjs(b.createdAt).valueOf()
-				)
-			)
-		);
-		sortComments.sort(
-			(a, b) => dayjs(a.createdAt).valueOf() - dayjs(b.createdAt).valueOf()
-		);
+		// 댓글 데이터를 재조합하고, 정렬
+		const comments = result.comments
+			.map((comment) => {
+				const { user, password, ...withoutUser } = comment;
+				return {
+					...withoutUser,
+					userId: comment.user ? comment.user.id : null,
+					commentReplies: comment.commentReplies
+						.map((reply) => {
+							const { user, password, ...withoutUserReply } = reply;
+							return {
+								...withoutUserReply,
+								userId: reply.user ? reply.user.id : null,
+							};
+						})
+						.sort(
+							(a, b) =>
+								dayjs(a.createdAt).valueOf() - dayjs(b.createdAt).valueOf()
+						),
+				};
+			})
+			.sort(
+				(a, b) => dayjs(a.createdAt).valueOf() - dayjs(b.createdAt).valueOf()
+			);
 
 		return {
 			...result,
-			comment: sortComments,
+			comments,
 			category,
 			readTime: readingTime(result.content).minutes,
 		};
