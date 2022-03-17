@@ -65,7 +65,7 @@ export class PostRepository extends Repository<Post> {
 			...result,
 			comments,
 			category,
-			readTime: readingTime(result.content).minutes,
+			readTime: readingTime(result.content, { wordsPerMinute: 500 }).text,
 		};
 	}
 
@@ -93,7 +93,7 @@ export class PostRepository extends Repository<Post> {
 					parentId: result.category.parent.id,
 					parentValue: result.category.parent.value,
 				},
-				readTime: readingTime(result.content).minutes,
+				readTime: readingTime(result.content, { wordsPerMinute: 500 }).text,
 			};
 		});
 

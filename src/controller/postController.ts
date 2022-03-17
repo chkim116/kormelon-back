@@ -135,7 +135,7 @@ export const patchPost = async (req: Request, res: Response) => {
 			tags: postTags,
 		});
 
-		res.status(200).send(postId);
+		res.status(200).send(`${postId}`);
 	} catch (err) {
 		res.status(400).send({ message: '업데이트 중 오류가 발생했습니다.' });
 	}
