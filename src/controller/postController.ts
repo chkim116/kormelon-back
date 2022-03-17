@@ -33,7 +33,7 @@ export const getPost = async (req: Request, res: Response) => {
 	const { id } = req.params;
 
 	try {
-		const post = await postRepository().findById(id);
+		const post = await postRepository().findById(+id);
 
 		if (!post) {
 			return res.status(400).send({ message: '존재하지 않는 게시글입니다.' });
@@ -94,7 +94,7 @@ export const postCreate = async (req: Request, res: Response) => {
 			tags: postTags,
 		});
 
-		res.status(201).send(postId);
+		res.status(201).send(`${postId}`);
 	} catch (err) {
 		logger.error(err);
 		res.status(400).send({ message: '작성 중 오류가 발생했습니다.' });
@@ -129,7 +129,7 @@ export const patchPost = async (req: Request, res: Response) => {
 		// create tag
 		const postTags = await tagRepository().createTags(updateData.tags);
 
-		const postId = await postRepository().updatePost(id, {
+		const postId = await postRepository().updatePost(+id, {
 			...updateData,
 			category,
 			tags: postTags,
@@ -146,7 +146,7 @@ export const deletePost = async (req: Request, res: Response) => {
 	const user = req.user;
 
 	try {
-		const exist = await postRepository().findOne({ id });
+		const exist = await postRepository().findOne({ id: +id });
 
 		if (!exist) {
 			throw new Error();
@@ -156,7 +156,7 @@ export const deletePost = async (req: Request, res: Response) => {
 			return res.status(401).send({ message: '권한이 없는 유저입니다.' });
 		}
 
-		await postRepository().deletePost(id);
+		await postRepository().deletePost(+id);
 
 		res.sendStatus(200);
 	} catch (err) {

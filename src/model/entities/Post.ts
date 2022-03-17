@@ -17,8 +17,8 @@ import { User } from './User';
 
 @Entity()
 export class Post {
-	@PrimaryGeneratedColumn('uuid')
-	id!: string;
+	@PrimaryGeneratedColumn()
+	id!: number;
 
 	@Column()
 	title!: string;
@@ -41,6 +41,7 @@ export class Post {
 	updatedAt!: Date;
 
 	@OneToMany(() => Comment, (comment) => comment.post, {
+		cascade: true,
 		eager: true,
 	})
 	comments!: Comment[];

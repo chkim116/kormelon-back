@@ -16,7 +16,7 @@ export class PostRepository extends Repository<Post> {
 		return result.id;
 	}
 
-	async findById(id: string) {
+	async findById(id: number) {
 		const result = await this.findOne({
 			where: { id },
 			relations: ['category', 'category.parent', 'tags', 'comments'],
@@ -105,7 +105,7 @@ export class PostRepository extends Repository<Post> {
 		};
 	}
 
-	async updatePost(id: string, updateData: Post) {
+	async updatePost(id: number, updateData: Post) {
 		const post = await this.findOne({ id });
 		const newPost = this.create({ ...updateData });
 
@@ -118,7 +118,7 @@ export class PostRepository extends Repository<Post> {
 		return result.id;
 	}
 
-	async deletePost(id: string) {
+	async deletePost(id: number) {
 		await this.delete({ id });
 	}
 }

@@ -15,7 +15,7 @@ export const postCreateComment = async (req: Request, res: Response) => {
 	const user = req.user;
 
 	try {
-		const post = await postRepository().findOne({ id });
+		const post = await postRepository().findOne({ id: +id });
 
 		if (!post) {
 			throw new Error('post가 없습니다.');
