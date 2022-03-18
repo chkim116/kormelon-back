@@ -7,6 +7,7 @@ import { postRouter } from '../../router/postRouter';
 import { userRouter } from '../../router/userRouter';
 import { categoryRouter } from '../../router/categoryRouter';
 import { tagRouter } from '../../router/tagRouter';
+import { searchRouter } from '../../router/searchRouter';
 import { checkView } from '../../view';
 
 const createTestServer = () => {
@@ -21,6 +22,7 @@ const createTestServer = () => {
 	app.use('/post/comment', commentRouter);
 	app.use('/category', categoryRouter);
 	app.use('/tags', tagRouter);
+	app.use('/search', searchRouter);
 
 	app.get('/view', checkView);
 

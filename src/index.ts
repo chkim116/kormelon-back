@@ -11,6 +11,7 @@ import { postRouter } from './router/postRouter';
 import { commentRouter } from './router/commentRouter';
 import { categoryRouter } from './router/categoryRouter';
 import { tagRouter } from './router/tagRouter';
+import { searchRouter } from './router/searchRouter';
 import { checkView, cronTotalView } from './view';
 import { isAuth } from './middleware/auth';
 import morgan from './lib/morgan';
@@ -35,6 +36,7 @@ server.use('/post', postRouter);
 server.use('/post/comment', commentRouter);
 server.use('/category', categoryRouter);
 server.use('/tags', tagRouter);
+server.use('/search', searchRouter);
 
 // ====== 조회수 관련 ===== //
 // ./view.ts
