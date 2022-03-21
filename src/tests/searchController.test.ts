@@ -33,6 +33,25 @@ beforeAll(async () => {
 });
 
 describe('search test', () => {
+	describe('GET /search/q={query}', () => {
+		it('검색된 값에 따라 해당 하는 게시글을 가져온다.', async () => {
+			const res = await server.get(`/search?q=${encodeURIComponent('제')}`);
+
+			console.log(res.body);
+
+			expect(res.status).toBe(200);
+			expect(res.body.total).toBe(3);
+			expect(res.body.results.length).toBe(3);
+		});
+
+		it('검색 값 쿼리를 날리지 않으면 에러를 반환한다.', async () => {
+			const res = await server.get(`/search?page=${PAGE}&per=${PER}`);
+
+			expect(res.status).toBe(400);
+			expect(res.body.message).toBe('검색 쿼리가 없습니다.');
+		});
+	});
+
 	describe('GET /search/tag?q={query}', () => {
 		it('태그에 따른 게시글을 가져온다.', async () => {
 			const res = await server.get(

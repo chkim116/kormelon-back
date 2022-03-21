@@ -1,4 +1,9 @@
-import { EntityRepository, getCustomRepository, Repository } from 'typeorm';
+import {
+	EntityRepository,
+	getCustomRepository,
+	Like,
+	Repository,
+} from 'typeorm';
 import readingTime from 'reading-time';
 
 import { Post } from '../entities/Post';
@@ -123,6 +128,45 @@ export class PostRepository extends Repository<Post> {
 	}
 
 	// 검색 관련
+	async findPostsByText(text: string, page: number = 1, per: number = 10) {
+		const results = await this.find({
+			where: { title: Like(`%${text}%`) },
+			order: {
+				id: 'DESC',
+			},
+			relations: ['tags', 'category', 'category.parent'],
+			skip: (page - 1) * per,
+			take: per,
+		});
+
+		const newResults = results.map((result) => {
+			const { id, title, content, tags, createdAt, isPrivate } = result;
+
+			return {
+				id,
+				title,
+				content,
+				tags,
+				isPrivate,
+				createdAt,
+				category: {
+					id: result.category.id,
+					value: result.category.value,
+					parentId: result.category.parent.id,
+					parentValue: result.category.parent.value,
+				},
+				readTime: readingTime(result.content, { wordsPerMinute: 500 }).text,
+			};
+		});
+
+		const total = await this.count();
+
+		return {
+			total,
+			results: newResults,
+		};
+	}
+
 	async findPostsByCategory(
 		categoryValue: string,
 		page: number = 1,
