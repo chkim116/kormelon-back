@@ -105,6 +105,110 @@ export class PostRepository extends Repository<Post> {
 		};
 	}
 
+	async updatePost(id: number, updateData: Post) {
+		const post = await this.findOne({ id });
+		const newPost = this.create({ ...updateData });
+
+		// update
+		const result = await this.save({
+			...post,
+			...newPost,
+		});
+
+		return result.id;
+	}
+
+	async deletePost(id: number) {
+		await this.delete({ id });
+	}
+
+	// 검색 관련
+	async findPostsByCategory(
+		categoryValue: string,
+		page: number = 1,
+		per: number = 10
+	) {
+		const results = await this.createQueryBuilder('post')
+			.innerJoinAndSelect('post.tags', 'tags')
+			.innerJoinAndSelect('post.category', 'category')
+			.leftJoinAndSelect('category.parent', 'category.parent')
+			.where('category.parent.value = :value', { value: categoryValue })
+			.orderBy('post.id', 'DESC')
+			.skip((page - 1) * per)
+			.take(per)
+			.getMany();
+
+		const newResults = results.map((result) => {
+			const { id, title, content, tags, createdAt, isPrivate } = result;
+
+			return {
+				id,
+				title,
+				content,
+				tags,
+				isPrivate,
+				createdAt,
+				category: {
+					id: result.category.id,
+					value: result.category.value,
+					parentId: result.category.parent.id,
+					parentValue: result.category.parent.value,
+				},
+				readTime: readingTime(result.content, { wordsPerMinute: 500 }).text,
+			};
+		});
+
+		const total = await this.count();
+
+		return {
+			total,
+			results: newResults,
+		};
+	}
+
+	async findPostsBySubCategory(
+		subCategoryValue: string,
+		page: number = 1,
+		per: number = 10
+	) {
+		const results = await this.createQueryBuilder('post')
+			.innerJoinAndSelect('post.tags', 'tags')
+			.innerJoinAndSelect('post.category', 'category')
+			.leftJoinAndSelect('category.parent', 'category.parent')
+			.where('category.value = :value', { value: subCategoryValue })
+			.orderBy('post.id', 'DESC')
+			.skip((page - 1) * per)
+			.take(per)
+			.getMany();
+
+		const newResults = results.map((result) => {
+			const { id, title, content, tags, createdAt, isPrivate } = result;
+
+			return {
+				id,
+				title,
+				content,
+				tags,
+				isPrivate,
+				createdAt,
+				category: {
+					id: result.category.id,
+					value: result.category.value,
+					parentId: result.category.parent.id,
+					parentValue: result.category.parent.value,
+				},
+				readTime: readingTime(result.content, { wordsPerMinute: 500 }).text,
+			};
+		});
+
+		const total = await this.count();
+
+		return {
+			total,
+			results: newResults,
+		};
+	}
+
 	async findPostsByTag(tagValue: string, page: number = 1, per: number = 10) {
 		const results = await this.createQueryBuilder('post')
 			.innerJoinAndSelect('post.tags', 'tags')
@@ -142,22 +246,5 @@ export class PostRepository extends Repository<Post> {
 			total,
 			results: newResults,
 		};
-	}
-
-	async updatePost(id: number, updateData: Post) {
-		const post = await this.findOne({ id });
-		const newPost = this.create({ ...updateData });
-
-		// update
-		const result = await this.save({
-			...post,
-			...newPost,
-		});
-
-		return result.id;
-	}
-
-	async deletePost(id: number) {
-		await this.delete({ id });
 	}
 }

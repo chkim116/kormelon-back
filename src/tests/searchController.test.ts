@@ -32,20 +32,60 @@ beforeAll(async () => {
 	}
 });
 
-describe('GET /search/tag?q={query}', () => {
-	it('태그에 따른 게시글을 가져온다.', async () => {
-		const res = await server.get(
-			`/search/tag?q=${encodeURIComponent(TAG_VALUE)}&page=${PAGE}&per=${PER}`
-		);
-		expect(res.status).toBe(200);
-		expect(res.body.total).toBe(3);
-		expect(res.body.results.length).toBe(3);
+describe('search test', () => {
+	describe('GET /search/tag?q={query}', () => {
+		it('태그에 따른 게시글을 가져온다.', async () => {
+			const res = await server.get(
+				`/search/tag?q=${encodeURIComponent(TAG_VALUE)}&page=${PAGE}&per=${PER}`
+			);
+			expect(res.status).toBe(200);
+			expect(res.body.total).toBe(3);
+			expect(res.body.results.length).toBe(3);
+		});
+
+		it('태그 쿼리를 날리지 않으면 에러를 반환한다.', async () => {
+			const res = await server.get(`/search/tag?page=${PAGE}&per=${PER}`);
+
+			expect(res.status).toBe(400);
+			expect(res.body.message).toBe('태그 검색 쿼리가 없습니다.');
+		});
 	});
 
-	it('태그 쿼리를 날리지 않으면 에러를 반환한다.', async () => {
-		const res = await server.get(`/search/tag?page=${PAGE}&per=${PER}`);
+	describe('GET /search/category?q={query}', () => {
+		it('상위 카테고리 값에 따라 게시글을 가져온다.', async () => {
+			const res = await server.get(
+				`/search/category?q=${encodeURIComponent(CATEGORY_VALUE)}`
+			);
 
-		expect(res.status).toBe(400);
-		expect(res.body.message).toBe('태그 검색 쿼리가 없습니다.');
+			expect(res.status).toBe(200);
+			expect(res.body.total).toBe(3);
+			expect(res.body.results.length).toBe(3);
+		});
+
+		it('상위 카테고리 쿼리를 날리지 않으면 에러를 반환한다.', async () => {
+			const res = await server.get(`/search/category?page=${PAGE}&per=${PER}`);
+
+			expect(res.status).toBe(400);
+			expect(res.body.message).toBe('상위 카테고리 쿼리가 없습니다.');
+		});
+	});
+
+	describe('GET /search/sub?q={query}', () => {
+		it('하위 카테고리 값에 따라 게시글을 가져온다.', async () => {
+			const res = await server.get(
+				`/search/sub?q=${encodeURIComponent(SUB_CATEGORY_VALUE)}`
+			);
+
+			expect(res.status).toBe(200);
+			expect(res.body.total).toBe(3);
+			expect(res.body.results.length).toBe(3);
+		});
+
+		it('하위 카테고리 쿼리를 날리지 않으면 에러를 반환한다.', async () => {
+			const res = await server.get(`/search/sub?page=${PAGE}&per=${PER}`);
+
+			expect(res.status).toBe(400);
+			expect(res.body.message).toBe('하위 카테고리 쿼리가 없습니다.');
+		});
 	});
 });

@@ -5,44 +5,42 @@ import { postRepository } from '../model/repository/PostRepository';
 type SearchQuery = Record<'q' | 'per' | 'page', string>;
 
 export const getSearchByCategory = async (req: Request, res: Response) => {
-	const { query } = req;
+	const { q: categoryValue, per, page } = req.query as SearchQuery;
+
 	try {
-		if (!query['q']) throw new Error('쿼리가 없습니다.');
+		if (!categoryValue)
+			return res
+				.status(400)
+				.send({ message: '상위 카테고리 쿼리가 없습니다.' });
 
-		const categoryValue = query['q'];
+		const results = await postRepository().findPostsByCategory(
+			categoryValue as string,
+			Number(page) || 1,
+			Number(per) || 10
+		);
 
-		const results = postRepository().find({
-			where: {
-				category: {
-					parent: {
-						value: categoryValue,
-					},
-				},
-			},
-		});
-
-		console.log(results);
+		res.status(200).send(results);
 	} catch (err) {
 		res.status(400).send({ message: '검색 결과 조회 중 오류가 발생했습니다.' });
 	}
 };
 
 export const getSearchBySubCategory = async (req: Request, res: Response) => {
-	const { query } = req;
+	const { q: subCategoryValue, per, page } = req.query as SearchQuery;
+
 	try {
-		if (!query['q']) throw new Error('쿼리가 없습니다.');
+		if (!subCategoryValue)
+			return res
+				.status(400)
+				.send({ message: '하위 카테고리 쿼리가 없습니다.' });
 
-		const subCategoryValue = query['q'];
+		const results = await postRepository().findPostsBySubCategory(
+			subCategoryValue as string,
+			Number(page) || 1,
+			Number(per) || 10
+		);
 
-		const results = postRepository().find({
-			where: {
-				category: {
-					value: subCategoryValue,
-				},
-			},
-		});
-
-		console.log(results);
+		res.status(200).send(results);
 	} catch (err) {
 		res.status(400).send({ message: '검색 결과 조회 중 오류가 발생했습니다.' });
 	}
