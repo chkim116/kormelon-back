@@ -13,8 +13,17 @@ import { tagRepository } from '../model/repository/TagRepository';
 import { CreatePostDTO } from './dto/postController.dto';
 
 export const getPosts = async (req: Request, res: Response) => {
-	const { page, per } = req.query as { page: string; per: string };
+	const { page, per, rss } = req.query as {
+		page: string;
+		per: string;
+		rss?: string;
+	};
 	try {
+		if (rss) {
+			const postRss = await postRepository().findPostRss();
+			return res.status(200).send(postRss);
+		}
+
 		const posts = await postRepository().findPosts(
 			Number(page) || 1,
 			Number(per) || 5
@@ -160,6 +169,7 @@ export const deletePost = async (req: Request, res: Response) => {
 
 		res.sendStatus(200);
 	} catch (err) {
+		logger.error(err);
 		res.status(400).send({ message: '삭제 중 오류가 발생했습니다.' });
 	}
 };

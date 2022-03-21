@@ -27,7 +27,7 @@ describe('Post test', () => {
 			});
 
 			expect(res.status).toEqual(201);
-			expect(res.text).toEqual(post!.id);
+			expect(res.text).toEqual(String(post!.id));
 		});
 
 		it('제목 빼먹음', async () => {

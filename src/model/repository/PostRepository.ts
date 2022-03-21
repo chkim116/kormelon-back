@@ -74,6 +74,17 @@ export class PostRepository extends Repository<Post> {
 		};
 	}
 
+	async findPostRss() {
+		const results = await this.find({
+			select: ['id', 'content', 'createdAt', 'title'],
+			order: {
+				id: 'DESC',
+			},
+		});
+
+		return results;
+	}
+
 	async findPosts(page: number = 1, per: number = 10) {
 		const results = await this.find({
 			relations: ['category', 'category.parent', 'tags'],
