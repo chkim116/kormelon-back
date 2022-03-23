@@ -140,7 +140,7 @@ export class PostRepository extends Repository<Post> {
 
 	// 검색 관련
 	async findPostsByText(text: string, page: number = 1, per: number = 10) {
-		const results = await this.find({
+		const [results, total] = await this.findAndCount({
 			where: { title: Like(`%${text}%`) },
 			order: {
 				id: 'DESC',
@@ -170,8 +170,6 @@ export class PostRepository extends Repository<Post> {
 			};
 		});
 
-		const total = await this.count();
-
 		return {
 			total,
 			results: newResults,
@@ -183,7 +181,7 @@ export class PostRepository extends Repository<Post> {
 		page: number = 1,
 		per: number = 10
 	) {
-		const results = await this.createQueryBuilder('post')
+		const [results, total] = await this.createQueryBuilder('post')
 			.innerJoinAndSelect('post.tags', 'tags')
 			.innerJoinAndSelect('post.category', 'category')
 			.leftJoinAndSelect('category.parent', 'category.parent')
@@ -191,7 +189,7 @@ export class PostRepository extends Repository<Post> {
 			.orderBy('post.id', 'DESC')
 			.skip((page - 1) * per)
 			.take(per)
-			.getMany();
+			.getManyAndCount();
 
 		const newResults = results.map((result) => {
 			const { id, title, content, tags, createdAt, isPrivate } = result;
@@ -212,8 +210,6 @@ export class PostRepository extends Repository<Post> {
 				readTime: readingTime(result.content, { wordsPerMinute: 500 }).text,
 			};
 		});
-
-		const total = await this.count();
 
 		return {
 			total,
@@ -226,7 +222,7 @@ export class PostRepository extends Repository<Post> {
 		page: number = 1,
 		per: number = 10
 	) {
-		const results = await this.createQueryBuilder('post')
+		const [results, total] = await this.createQueryBuilder('post')
 			.innerJoinAndSelect('post.tags', 'tags')
 			.innerJoinAndSelect('post.category', 'category')
 			.leftJoinAndSelect('category.parent', 'category.parent')
@@ -234,7 +230,7 @@ export class PostRepository extends Repository<Post> {
 			.orderBy('post.id', 'DESC')
 			.skip((page - 1) * per)
 			.take(per)
-			.getMany();
+			.getManyAndCount();
 
 		const newResults = results.map((result) => {
 			const { id, title, content, tags, createdAt, isPrivate } = result;
@@ -255,8 +251,6 @@ export class PostRepository extends Repository<Post> {
 				readTime: readingTime(result.content, { wordsPerMinute: 500 }).text,
 			};
 		});
-
-		const total = await this.count();
 
 		return {
 			total,
@@ -265,7 +259,7 @@ export class PostRepository extends Repository<Post> {
 	}
 
 	async findPostsByTag(tagValue: string, page: number = 1, per: number = 10) {
-		const results = await this.createQueryBuilder('post')
+		const [results, total] = await this.createQueryBuilder('post')
 			.innerJoinAndSelect('post.tags', 'tags')
 			.innerJoinAndSelect('post.category', 'category')
 			.leftJoinAndSelect('category.parent', 'category.parent')
@@ -273,7 +267,7 @@ export class PostRepository extends Repository<Post> {
 			.orderBy('post.id', 'DESC')
 			.skip((page - 1) * per)
 			.take(per)
-			.getMany();
+			.getManyAndCount();
 
 		const newResults = results.map((result) => {
 			const { id, title, content, tags, createdAt, isPrivate } = result;
@@ -294,8 +288,6 @@ export class PostRepository extends Repository<Post> {
 				readTime: readingTime(result.content, { wordsPerMinute: 500 }).text,
 			};
 		});
-
-		const total = await this.count();
 
 		return {
 			total,
