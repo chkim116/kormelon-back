@@ -15,7 +15,10 @@ export const postCreateComment = async (req: Request, res: Response) => {
 	const user = req.user;
 
 	try {
-		const post = await postRepository().findOne({ id: +id });
+		const post = await postRepository().findOne({
+			where: { id: +id },
+			relations: ['user'],
+		});
 
 		if (!post) {
 			throw new Error('post가 없습니다.');

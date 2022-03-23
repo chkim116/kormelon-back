@@ -7,6 +7,7 @@ import {
 
 import { Comment } from '../entities/Comment';
 import { CommentReply } from '../entities/CommentReply';
+import { Notification } from '../entities/Notification';
 import { Post } from '../entities/Post';
 import { User } from '../entities/User';
 
@@ -16,6 +17,36 @@ export function commentRepository() {
 
 export function commentReplyRepository() {
 	return getRepository(CommentReply, process.env.NODE_ENV);
+}
+
+function notificationRepository() {
+	return getRepository(Notification, process.env.NODE_ENV);
+}
+
+async function addNotification({
+	targetId,
+	targetValue,
+	type,
+	author,
+	user,
+	value,
+}: {
+	targetId: string;
+	targetValue: string;
+	type: 'post' | 'comment';
+	author: string;
+	user: User | null;
+	value: string;
+}) {
+	const notification = notificationRepository().create({
+		targetId,
+		targetValue,
+		type,
+		author,
+		user,
+		value,
+	});
+	await notificationRepository().save(notification);
 }
 
 interface CreateComment {
@@ -48,7 +79,16 @@ export class CommentRepository extends Repository<Comment> {
 			post,
 		});
 
-		return await this.save(comment);
+		const res = await this.save(comment);
+		await addNotification({
+			targetId: String(post.id),
+			targetValue: post.title,
+			type: 'post',
+			author: user?.username || '익명',
+			user: post.user || null,
+			value: text,
+		});
+		return res;
 	}
 
 	async updateComment(id: string, text: string) {
@@ -100,7 +140,14 @@ export class CommentRepository extends Repository<Comment> {
 		});
 
 		await this.save(result);
-
+		await addNotification({
+			targetId: parent.id,
+			targetValue: parent.text,
+			type: 'comment',
+			author: user?.username || '익명',
+			user: parent.user || null,
+			value: text,
+		});
 		return commentReply;
 	}
 

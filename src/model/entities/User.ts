@@ -6,8 +6,10 @@ import {
 	PrimaryGeneratedColumn,
 	UpdateDateColumn,
 } from 'typeorm';
+
 import { Comment } from './Comment';
 import { Post } from './Post';
+import { Notification } from './Notification';
 
 @Entity()
 export class User {
@@ -39,4 +41,7 @@ export class User {
 
 	@OneToMany(() => Comment, (comment) => comment.user)
 	comments!: Comment[];
+
+	@OneToMany(() => Notification, (notification) => notification.user)
+	notifications!: Notification[];
 }

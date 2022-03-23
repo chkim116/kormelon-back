@@ -7,6 +7,7 @@ import dotenv from 'dotenv';
 import { RegisterDTO } from './dto/userController.dto';
 import { userRepository } from '../model/repository/UserRepository';
 import logger from '../lib/logger';
+import dayjs from 'dayjs';
 
 dotenv.config();
 
@@ -101,7 +102,10 @@ export const getAuth = async (req: Request, res: Response) => {
 				throw new Error();
 			}
 
-			const user = await userRepository().findOne({ id: decoded.userId });
+			const user = await userRepository().findOne({
+				where: { id: decoded.userId },
+				relations: ['notifications'],
+			});
 			if (!user) {
 				return res
 					.status(400)
@@ -113,6 +117,9 @@ export const getAuth = async (req: Request, res: Response) => {
 				email: user.email,
 				username: user.username,
 				isAdmin: user.isAdmin,
+				notification: user.notifications.sort(
+					(a, b) => dayjs(b.createdAt).valueOf() - dayjs(a.createdAt).valueOf()
+				),
 			});
 		});
 	} catch (err) {
