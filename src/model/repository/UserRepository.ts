@@ -8,7 +8,10 @@ export function userRepository() {
 @EntityRepository(User)
 export class UserRepository extends Repository<User> {
 	findByEmail(email: string) {
-		return this.findOne({ where: { email }, relations: ['posts'] });
+		return this.findOne({
+			where: { email },
+			relations: ['posts', 'notifications'],
+		});
 	}
 
 	register(user: Pick<User, 'username' | 'email' | 'password'>) {

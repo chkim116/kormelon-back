@@ -96,7 +96,9 @@ describe('Post test', () => {
 		it('포스트 리드 실패', async () => {
 			const err = await server.get('/post/ax213');
 			expect(err.status).toBe(400);
-			expect(err.body.message).toEqual('존재하지 않는 게시글입니다.');
+			expect(err.body.message).toEqual(
+				'게시글을 불러오는 중 오류가 발생했습니다.'
+			);
 		});
 	});
 
@@ -120,7 +122,7 @@ describe('Post test', () => {
 				.set('Cookie', token);
 
 			expect(res.status).toBe(200);
-			expect(res.text).toEqual(post!.id);
+			expect(res.text).toEqual(String(post!.id));
 		});
 
 		it('잘못된 /:id 요청으로 인한 업데이트 실패', async () => {

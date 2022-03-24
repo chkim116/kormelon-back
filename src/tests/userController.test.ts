@@ -57,6 +57,7 @@ describe('User test', () => {
 			expect(res.body).toHaveProperty('username');
 			expect(res.body).toHaveProperty('email');
 			expect(res.body).toHaveProperty('isAdmin');
+			expect(res.body).toHaveProperty('notifications');
 			expect(res.header['set-cookie'].length).toBeTruthy();
 		});
 
@@ -94,6 +95,7 @@ describe('User test', () => {
 			expect(res.body).toHaveProperty('username');
 			expect(res.body).toHaveProperty('email');
 			expect(res.body).toHaveProperty('isAdmin');
+			expect(res.body).toHaveProperty('notifications');
 		});
 
 		it('쿠키 포함이 되지 않은 요청 시', async () => {

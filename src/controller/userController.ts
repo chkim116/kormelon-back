@@ -70,12 +70,18 @@ export const postLogin = async (req: Request, res: Response) => {
 
 		// * token 생성
 		const token = jwt.sign({ userId: user.id }, process.env.JWT!);
-		res.status(200).cookie('auth', token, cookieOption()).send({
-			id: user.id,
-			email: user.email,
-			username: user.username,
-			isAdmin: user.isAdmin,
-		});
+		res
+			.status(200)
+			.cookie('auth', token, cookieOption())
+			.send({
+				id: user.id,
+				email: user.email,
+				username: user.username,
+				isAdmin: user.isAdmin,
+				notifications: user.notifications.sort(
+					(a, b) => dayjs(b.createdAt).valueOf() - dayjs(a.createdAt).valueOf()
+				),
+			});
 	} catch (err) {
 		logger.error(err);
 		res.status(401).send({ message: '존재하지 않는 유저입니다.' });
@@ -117,7 +123,7 @@ export const getAuth = async (req: Request, res: Response) => {
 				email: user.email,
 				username: user.username,
 				isAdmin: user.isAdmin,
-				notification: user.notifications.sort(
+				notifications: user.notifications.sort(
 					(a, b) => dayjs(b.createdAt).valueOf() - dayjs(a.createdAt).valueOf()
 				),
 			});
