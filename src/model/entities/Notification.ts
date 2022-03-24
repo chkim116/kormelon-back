@@ -13,19 +13,22 @@ export class Notification {
 	id!: string;
 
 	@Column()
-	type!: 'post' | 'comment';
+	type!: 'comment' | 'reply';
+
+	@Column()
+	postId!: number;
+
+	@Column()
+	postTitle!: string;
 
 	@Column()
 	targetId!: string;
 
 	@Column()
-	targetValue!: string;
+	value!: string;
 
 	@Column()
 	author!: string;
-
-	@Column()
-	value!: string;
 
 	@Column({ default: false })
 	isRead!: boolean;

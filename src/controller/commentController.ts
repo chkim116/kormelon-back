@@ -61,7 +61,7 @@ export const postCreateReply = async (req: Request, res: Response) => {
 	try {
 		const comment = await commentRepository().findOne({
 			where: { id },
-			relations: ['commentReplies'],
+			relations: ['commentReplies', 'post'],
 		});
 
 		if (!comment) {

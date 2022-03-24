@@ -24,27 +24,30 @@ function notificationRepository() {
 }
 
 async function addNotification({
+	postId,
+	postTitle,
 	targetId,
-	targetValue,
+	value,
 	type,
 	author,
 	user,
-	value,
 }: {
+	postId: number;
+	postTitle: string;
 	targetId: string;
-	targetValue: string;
-	type: 'post' | 'comment';
+	value: string;
+	type: 'comment' | 'reply';
 	author: string;
 	user: User | null;
-	value: string;
 }) {
 	const notification = notificationRepository().create({
+		postId,
+		postTitle,
 		targetId,
-		targetValue,
+		value,
 		type,
 		author,
 		user,
-		value,
 	});
 	await notificationRepository().save(notification);
 }
@@ -81,12 +84,13 @@ export class CommentRepository extends Repository<Comment> {
 
 		const res = await this.save(comment);
 		await addNotification({
-			targetId: String(post.id),
-			targetValue: post.title,
-			type: 'post',
+			postId: post.id,
+			postTitle: post.title,
+			targetId: comment.id,
+			value: comment.text,
+			type: 'comment',
 			author: user?.username || '익명',
 			user: post.user || null,
-			value: text,
 		});
 		return res;
 	}
@@ -141,12 +145,13 @@ export class CommentRepository extends Repository<Comment> {
 
 		await this.save(result);
 		await addNotification({
-			targetId: parent.id,
-			targetValue: parent.text,
-			type: 'comment',
+			postId: parent.post.id,
+			postTitle: parent.post.title,
+			targetId: commentReply.id,
+			value: text,
+			type: 'reply',
 			author: user?.username || '익명',
 			user: parent.user || null,
-			value: text,
 		});
 		return commentReply;
 	}
