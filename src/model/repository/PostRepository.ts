@@ -52,7 +52,7 @@ export class PostRepository extends Repository<Post> {
 					...withoutUser,
 					userImage:
 						user?.userImage ||
-						gravatar.url(`${user?.username}@email.com`, {
+						gravatar.url(`${withoutUser.username}@email.com`, {
 							s: '100',
 							d: 'retro',
 						}),
@@ -65,7 +65,7 @@ export class PostRepository extends Repository<Post> {
 								userId: reply.user ? reply.user.id : null,
 								userImage:
 									user?.userImage ||
-									gravatar.url(`${user?.username}@email.com`, {
+									gravatar.url(`${withoutUserReply.username}@email.com`, {
 										s: '100',
 										d: 'retro',
 									}),
