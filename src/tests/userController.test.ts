@@ -44,6 +44,17 @@ describe('User test', () => {
 			expect(err.status).toEqual(400);
 			expect(err.body.message).toEqual('올바른 이메일 형식을 입력해 주세요.');
 		});
+
+		it('이미 있는 유저 네임일때', async () => {
+			const err = await server.post('/user/register').send({
+				email: 'chkim116@naver.com',
+				username: 'abc',
+				password: '123',
+			});
+
+			expect(err.status).toEqual(400);
+			expect(err.body.message).toEqual('이미 존재하는 유저 이름입니다.');
+		});
 	});
 
 	describe('POST /user/login', () => {

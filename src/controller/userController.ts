@@ -21,7 +21,7 @@ function cookieOption() {
 }
 
 export const postRegister = async (req: Request, res: Response) => {
-	const { email, password }: RegisterDTO = req.body;
+	const { email, username, password }: RegisterDTO = req.body;
 
 	try {
 		// valid
@@ -36,12 +36,19 @@ export const postRegister = async (req: Request, res: Response) => {
 			return res.status(400).send({ message: '이미 존재하는 유저입니다.' });
 		}
 
+		const existsUsername = await userRepository().findOne({ username });
+		if (existsUsername) {
+			return res
+				.status(400)
+				.send({ message: '이미 존재하는 유저 이름입니다.' });
+		}
+
 		// user 생성
 		const salt = await bcrypt.genSalt(10);
 		const hashPassword = await bcrypt.hash(password, salt);
 
 		const userData = {
-			username: email.split('@')[0],
+			username: username || email.split('@')[0],
 			email,
 			userImage: gravatar.url(email, { s: '100', d: 'retro' }),
 			password: hashPassword,
