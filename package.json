@@ -8,7 +8,7 @@
 		"test:c": "jest --forceExit --detectOpenHandles --coverage",
 		"build": "rm -rf dist && tsc",
 		"dev": "nodemon",
-		"prestart": "npm run build",
+		"generate-eb-zip": "sh ./scripts/eb-zip.sh",
 		"start": "NODE_ENV=production node ./dist/index.js",
 		"typeorm": "node --require ts-node/register ./node_modules/typeorm/cli.js -f src/ormConfig.ts",
 		"migration:create": "typeorm migration:create -c production -d src/model/migration -n migration",
