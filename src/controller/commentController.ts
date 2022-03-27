@@ -1,4 +1,5 @@
 import { Request, Response } from 'express';
+import gravatar from 'gravatar';
 
 import logger from '../lib/logger';
 import {
@@ -43,6 +44,9 @@ export const postCreateComment = async (req: Request, res: Response) => {
 			isAnonymous: comment.isAnonymous,
 			userId: comment.user ? comment.user.id : null,
 			username: comment.username,
+			userImage:
+				comment.user?.userImage ||
+				gravatar.url(`${username}@email.com`, { s: '100', d: 'retro' }),
 			commentReplies: comment.commentReplies,
 			createdAt: comment.createdAt,
 			deletedAt: comment.deletedAt,
@@ -87,6 +91,9 @@ export const postCreateReply = async (req: Request, res: Response) => {
 			isAnonymous: reply.isAnonymous,
 			userId: reply.user ? reply.user.id : null,
 			username: reply.username,
+			userImage:
+				reply.user?.userImage ||
+				gravatar.url(`${username}@email.com`, { s: '100', d: 'retro' }),
 			createdAt: reply.createdAt,
 		});
 	} catch (err) {
