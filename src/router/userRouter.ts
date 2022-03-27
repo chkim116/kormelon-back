@@ -6,7 +6,9 @@ import {
 	postLogin,
 	getAuth,
 	postLogout,
+	readNotification,
 } from '../controller/userController';
+import { isAuth } from '../middleware/auth';
 
 export const userRouter = express.Router();
 
@@ -36,3 +38,5 @@ userRouter.post(
 userRouter.get('/auth', getAuth);
 
 userRouter.post('/logout', postLogout);
+
+userRouter.get('/noti/:id', isAuth, readNotification);

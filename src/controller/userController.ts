@@ -3,11 +3,13 @@ import { validationResult } from 'express-validator';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
+import { getRepository } from 'typeorm';
 
 import { RegisterDTO } from './dto/userController.dto';
 import { userRepository } from '../model/repository/UserRepository';
 import logger from '../lib/logger';
 import dayjs from 'dayjs';
+import { Notification } from '../model/entities/Notification';
 
 dotenv.config();
 
@@ -140,5 +142,38 @@ export const postLogout = async (req: Request, res: Response) => {
 	} catch (err) {
 		logger.error(err);
 		res.sendStatus(400);
+	}
+};
+
+export const readNotification = async (req: Request, res: Response) => {
+	const { id } = req.params;
+
+	try {
+		const notificationRepository = getRepository(
+			Notification,
+			process.env.NODE_ENV
+		);
+
+		const notification = await notificationRepository.findOne({
+			where: {
+				targetId: id,
+			},
+		});
+
+		if (!notification) {
+			return res.status(400).send({ message: '존재하지 않은 알림입니다.' });
+		}
+
+		const read = notificationRepository.create({
+			...notification,
+			isRead: true,
+		});
+
+		await notificationRepository.save(read);
+
+		res.sendStatus(200);
+	} catch (err) {
+		logger.error(err);
+		res.status(400).send({ message: '알 수 없는 오류입니다.' });
 	}
 };

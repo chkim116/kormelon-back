@@ -83,15 +83,19 @@ export class CommentRepository extends Repository<Comment> {
 		});
 
 		const res = await this.save(comment);
-		await addNotification({
-			postId: post.id,
-			postTitle: post.title,
-			targetId: comment.id,
-			value: comment.text,
-			type: 'comment',
-			author: user?.username || '익명',
-			user: post.user || null,
-		});
+
+		if (user?.id !== post.user.id) {
+			await addNotification({
+				postId: post.id,
+				postTitle: post.title,
+				targetId: comment.id,
+				value: comment.text,
+				type: 'comment',
+				author: user?.username || '익명',
+				user: post.user || null,
+			});
+		}
+
 		return res;
 	}
 
@@ -144,15 +148,19 @@ export class CommentRepository extends Repository<Comment> {
 		});
 
 		await this.save(result);
-		await addNotification({
-			postId: parent.post.id,
-			postTitle: parent.post.title,
-			targetId: commentReply.id,
-			value: text,
-			type: 'reply',
-			author: user?.username || '익명',
-			user: parent.user || null,
-		});
+
+		if (user?.id !== parent.post.userId) {
+			await addNotification({
+				postId: parent.post.id,
+				postTitle: parent.post.title,
+				targetId: commentReply.id,
+				value: text,
+				type: 'reply',
+				author: user?.username || '익명',
+				user: parent.user || null,
+			});
+		}
+
 		return commentReply;
 	}
 
