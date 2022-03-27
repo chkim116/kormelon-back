@@ -5,6 +5,7 @@ import {
 	Repository,
 } from 'typeorm';
 import readingTime from 'reading-time';
+import gravatar from 'gravatar';
 
 import { Post } from '../entities/Post';
 import dayjs from 'dayjs';
@@ -49,13 +50,25 @@ export class PostRepository extends Repository<Post> {
 				const { user, password, ...withoutUser } = comment;
 				return {
 					...withoutUser,
-					userId: comment.user ? comment.user.id : null,
+					userImage:
+						user?.userImage ||
+						gravatar.url(`${user?.username}@email.com`, {
+							s: '100',
+							d: 'retro',
+						}),
+					userId: user ? user.id : null,
 					commentReplies: comment.commentReplies
 						.map((reply) => {
 							const { user, password, ...withoutUserReply } = reply;
 							return {
 								...withoutUserReply,
 								userId: reply.user ? reply.user.id : null,
+								userImage:
+									user?.userImage ||
+									gravatar.url(`${user?.username}@email.com`, {
+										s: '100',
+										d: 'retro',
+									}),
 							};
 						})
 						.sort(
