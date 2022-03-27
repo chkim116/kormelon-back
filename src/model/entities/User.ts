@@ -20,6 +20,9 @@ export class User {
 	username!: string;
 
 	@Column()
+	userImage!: string;
+
+	@Column()
 	email!: string;
 
 	@Column()

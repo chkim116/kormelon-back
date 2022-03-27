@@ -4,6 +4,7 @@ import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
 import { getRepository } from 'typeorm';
+import gravatar from 'gravatar';
 
 import { RegisterDTO } from './dto/userController.dto';
 import { userRepository } from '../model/repository/UserRepository';
@@ -42,6 +43,7 @@ export const postRegister = async (req: Request, res: Response) => {
 		const userData = {
 			username: email.split('@')[0],
 			email,
+			userImage: gravatar.url(email, { s: '100', d: 'retro' }),
 			password: hashPassword,
 		};
 
@@ -80,6 +82,7 @@ export const postLogin = async (req: Request, res: Response) => {
 				email: user.email,
 				username: user.username,
 				isAdmin: user.isAdmin,
+				userImage: user.userImage,
 				notifications: user.notifications.sort(
 					(a, b) => dayjs(b.createdAt).valueOf() - dayjs(a.createdAt).valueOf()
 				),
@@ -125,6 +128,7 @@ export const getAuth = async (req: Request, res: Response) => {
 				email: user.email,
 				username: user.username,
 				isAdmin: user.isAdmin,
+				userImage: user.userImage,
 				notifications: user.notifications.sort(
 					(a, b) => dayjs(b.createdAt).valueOf() - dayjs(a.createdAt).valueOf()
 				),
