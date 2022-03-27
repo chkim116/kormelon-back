@@ -22,7 +22,7 @@ export const postRouter = express.Router();
 // 전체
 postRouter.get('/', getPosts);
 
-postRouter.get('/:id', getPost);
+postRouter.get('/:id', isAuth, getPost);
 
 postRouter.post(
 	'/',

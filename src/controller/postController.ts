@@ -40,9 +40,10 @@ export const getPosts = async (req: Request, res: Response) => {
 
 export const getPost = async (req: Request, res: Response) => {
 	const { id } = req.params;
+	const userId = req.user?.id;
 
 	try {
-		const post = await postRepository().findById(+id);
+		const post = await postRepository().findById(+id, userId);
 
 		if (!post) {
 			return res.status(400).send({ message: '존재하지 않는 게시글입니다.' });

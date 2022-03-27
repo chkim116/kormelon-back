@@ -21,7 +21,7 @@ export class PostRepository extends Repository<Post> {
 		return result.id;
 	}
 
-	async findById(id: number) {
+	async findById(id: number, userId?: string) {
 		const result = await this.findOne({
 			where: { id },
 			relations: ['category', 'category.parent', 'tags', 'comments'],
@@ -31,7 +31,9 @@ export class PostRepository extends Repository<Post> {
 			return;
 		}
 
-		result.view++;
+		if (userId !== result.userId) {
+			result.view++;
+		}
 		await this.save(result);
 
 		const category = {
