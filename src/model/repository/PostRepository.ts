@@ -94,15 +94,16 @@ export class PostRepository extends Repository<Post> {
 		});
 
 		const newResults = results.map((result) => {
-			const { id, title, content, tags, createdAt, isPrivate } = result;
+			const { id, title, tags, createdAt, isPrivate, comments, view } = result;
 
 			return {
 				id,
 				title,
-				content,
 				tags,
 				isPrivate,
 				createdAt,
+				view,
+				commentLength: comments.length,
 				category: {
 					id: result.category.id,
 					value: result.category.value,
@@ -151,14 +152,15 @@ export class PostRepository extends Repository<Post> {
 		});
 
 		const newResults = results.map((result) => {
-			const { id, title, content, tags, createdAt, isPrivate } = result;
+			const { id, title, tags, createdAt, isPrivate, comments, view } = result;
 
 			return {
 				id,
 				title,
-				content,
 				tags,
 				isPrivate,
+				view,
+				commentLength: comments.length,
 				createdAt,
 				category: {
 					id: result.category.id,
@@ -192,15 +194,16 @@ export class PostRepository extends Repository<Post> {
 			.getManyAndCount();
 
 		const newResults = results.map((result) => {
-			const { id, title, content, tags, createdAt, isPrivate } = result;
+			const { id, title, tags, createdAt, isPrivate, comments, view } = result;
 
 			return {
 				id,
 				title,
-				content,
 				tags,
 				isPrivate,
 				createdAt,
+				view,
+				commentLength: comments.length,
 				category: {
 					id: result.category.id,
 					value: result.category.value,
@@ -233,15 +236,16 @@ export class PostRepository extends Repository<Post> {
 			.getManyAndCount();
 
 		const newResults = results.map((result) => {
-			const { id, title, content, tags, createdAt, isPrivate } = result;
+			const { id, title, tags, createdAt, isPrivate, comments, view } = result;
 
 			return {
 				id,
 				title,
-				content,
 				tags,
 				isPrivate,
 				createdAt,
+				view,
+				commentLength: comments.length,
 				category: {
 					id: result.category.id,
 					value: result.category.value,
@@ -270,15 +274,16 @@ export class PostRepository extends Repository<Post> {
 			.getManyAndCount();
 
 		const newResults = results.map((result) => {
-			const { id, title, content, tags, createdAt, isPrivate } = result;
+			const { id, title, tags, createdAt, isPrivate, comments, view } = result;
 
 			return {
 				id,
 				title,
-				content,
 				tags,
 				isPrivate,
 				createdAt,
+				view,
+				commentLength: comments.length,
 				category: {
 					id: result.category.id,
 					value: result.category.value,
