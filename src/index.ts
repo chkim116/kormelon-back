@@ -21,7 +21,8 @@ const server = express();
 server.use(helmet());
 server.use(
 	cors({
-		origin: true,
+		origin:
+			process.env.NODE_ENV === 'production' ? 'https://kormelon.com' : true,
 		credentials: true,
 	})
 );
