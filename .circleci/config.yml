@@ -1,7 +1,7 @@
 version: 2.1
 
 orbs:
-    node: circleci/node@1.1
+    node: circleci/node@5.0.1
     aws-cli: circleci/aws-cli@1.4.0
     aws-ebcli: circleci/aws-elastic-beanstalk@1.0.2
 
@@ -15,7 +15,7 @@ jobs:
         steps:
             - checkout
             - node/install:
-                  node-version: "16.13.0"
+                  node-version: "16.13"
                   install-yarn: true
             - node/with-cache:
                   steps:
