@@ -15,7 +15,7 @@ jobs:
         steps:
             - checkout
             - node/install:
-                  node-version: "14.15.4"
+                  node-version: "16.13.0"
                   install-yarn: true
             - node/with-cache:
                   steps:
@@ -52,8 +52,8 @@ jobs:
                   name: "Deploy to Elastic Beanstalk"
                   command: |
                       yarn generate-eb-zip
-                      eb init kormelon-api --keyname "Kormelonapi-env" --platform "Node.js 14" --region "ap-northeast-2"
-                      eb deploy Kormelonapi-env
+                      eb init kormelon-api --keyname "Kormelonapiv2-env" --platform "Node.js 16" --region "ap-northeast-2"
+                      eb deploy Kormelonapiv2-env
 
 workflows:
     version: 2
@@ -63,5 +63,5 @@ workflows:
                   filters:
                       branches:
                           only:
-                              - v2
+                              - deploy
                   context: kormelon
