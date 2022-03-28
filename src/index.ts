@@ -50,7 +50,7 @@ server.get('/', (_, res: Response) => {
 	res.send('welcome');
 });
 
-server.listen(4000, () => {
+server.listen(process.env.PORT, () => {
 	console.log('http://localhost:4000');
 });
 
