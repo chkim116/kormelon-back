@@ -24,18 +24,6 @@ jobs:
                             key: cache-live-{{ checksum "yarn.lock" }}
                       - run: yarn install
                       - run: mkdir -p ./logs
-                      - run:
-                            name: Run Tests
-                            command: |
-                                mkdir -p ./reports/junit
-                                yarn test
-                            environment:
-                                JEST_JUNIT_OUTPUT_DIR: ./reports/junit/
-                      - store_test_results:
-                            path: ./reports/junit/
-                      - store_artifacts:
-                            path: ./reports/junit
-
                       - run: yarn build
                       - save_cache:
                             key: cache-live-{{ checksum "yarn.lock" }}
