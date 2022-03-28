@@ -3,7 +3,7 @@ version: 2.1
 orbs:
     node: circleci/node@5.0.1
     aws-cli: circleci/aws-cli@1.4.0
-    aws-ebcli: circleci/aws-elastic-beanstalk@1.0.2
+    aws-ebcli: circleci/aws-elastic-beanstalk@2.0.1
 
 defaults: &defaults
     docker:
@@ -37,7 +37,7 @@ jobs:
                   name: "Deploy to Elastic Beanstalk"
                   command: |
                       yarn generate-eb-zip
-                      eb init kormelon-api --keyname "Kormelonapiv2-env" --platform "Node.js 16" --region "ap-northeast-2"
+                      eb init kormelon-api-v2 --keyname "Kormelonapiv2-env" --platform "Node.js 16" --region "ap-northeast-2"
                       eb deploy Kormelonapiv2-env
 
 workflows:
