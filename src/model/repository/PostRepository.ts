@@ -109,7 +109,17 @@ export class PostRepository extends Repository<Post> {
 		});
 
 		const newResults = results.map((result) => {
-			const { id, title, tags, createdAt, isPrivate, comments, view } = result;
+			const {
+				id,
+				title,
+				tags,
+				content,
+				createdAt,
+				isPrivate,
+				comments,
+				view,
+				category,
+			} = result;
 
 			return {
 				id,
@@ -120,12 +130,12 @@ export class PostRepository extends Repository<Post> {
 				view,
 				commentLength: comments.length,
 				category: {
-					id: result.category.id,
-					value: result.category.value,
-					parentId: result.category.parent.id,
-					parentValue: result.category.parent.value,
+					id: category.id,
+					value: category.value,
+					parentId: category.parent.id,
+					parentValue: category.parent.value,
 				},
-				readTime: readingTime(result.content, { wordsPerMinute: 500 }).text,
+				readTime: readingTime(content, { wordsPerMinute: 500 }).text,
 			};
 		});
 
@@ -167,7 +177,17 @@ export class PostRepository extends Repository<Post> {
 		});
 
 		const newResults = results.map((result) => {
-			const { id, title, tags, createdAt, isPrivate, comments, view } = result;
+			const {
+				id,
+				title,
+				tags,
+				content,
+				createdAt,
+				isPrivate,
+				comments,
+				view,
+				category,
+			} = result;
 
 			return {
 				id,
@@ -178,12 +198,12 @@ export class PostRepository extends Repository<Post> {
 				commentLength: comments.length,
 				createdAt,
 				category: {
-					id: result.category.id,
-					value: result.category.value,
-					parentId: result.category.parent.id,
-					parentValue: result.category.parent.value,
+					id: category.id,
+					value: category.value,
+					parentId: category.parent.id,
+					parentValue: category.parent.value,
 				},
-				readTime: readingTime(result.content, { wordsPerMinute: 500 }).text,
+				readTime: readingTime(content, { wordsPerMinute: 500 }).text,
 			};
 		});
 
@@ -201,6 +221,7 @@ export class PostRepository extends Repository<Post> {
 		const [results, total] = await this.createQueryBuilder('post')
 			.innerJoinAndSelect('post.tags', 'tags')
 			.innerJoinAndSelect('post.category', 'category')
+			.leftJoinAndSelect('post.comments', 'comments')
 			.leftJoinAndSelect('category.parent', 'category.parent')
 			.where('category.parent.value = :value', { value: categoryValue })
 			.orderBy('post.id', 'DESC')
@@ -209,7 +230,17 @@ export class PostRepository extends Repository<Post> {
 			.getManyAndCount();
 
 		const newResults = results.map((result) => {
-			const { id, title, tags, createdAt, isPrivate, comments, view } = result;
+			const {
+				id,
+				title,
+				tags,
+				content,
+				createdAt,
+				isPrivate,
+				comments,
+				view,
+				category,
+			} = result;
 
 			return {
 				id,
@@ -220,12 +251,12 @@ export class PostRepository extends Repository<Post> {
 				view,
 				commentLength: comments.length,
 				category: {
-					id: result.category.id,
-					value: result.category.value,
-					parentId: result.category.parent.id,
-					parentValue: result.category.parent.value,
+					id: category.id,
+					value: category.value,
+					parentId: category.parent.id,
+					parentValue: category.parent.value,
 				},
-				readTime: readingTime(result.content, { wordsPerMinute: 500 }).text,
+				readTime: readingTime(content, { wordsPerMinute: 500 }).text,
 			};
 		});
 
@@ -243,6 +274,7 @@ export class PostRepository extends Repository<Post> {
 		const [results, total] = await this.createQueryBuilder('post')
 			.innerJoinAndSelect('post.tags', 'tags')
 			.innerJoinAndSelect('post.category', 'category')
+			.leftJoinAndSelect('post.comments', 'comments')
 			.leftJoinAndSelect('category.parent', 'category.parent')
 			.where('category.value = :value', { value: subCategoryValue })
 			.orderBy('post.id', 'DESC')
@@ -250,8 +282,18 @@ export class PostRepository extends Repository<Post> {
 			.take(per)
 			.getManyAndCount();
 
-		const newResults = results.map((result) => {
-			const { id, title, tags, createdAt, isPrivate, comments, view } = result;
+		const newResults = results.map((post) => {
+			const {
+				id,
+				title,
+				tags,
+				createdAt,
+				isPrivate,
+				content,
+				comments,
+				view,
+				category,
+			} = post;
 
 			return {
 				id,
@@ -262,12 +304,12 @@ export class PostRepository extends Repository<Post> {
 				view,
 				commentLength: comments.length,
 				category: {
-					id: result.category.id,
-					value: result.category.value,
-					parentId: result.category.parent.id,
-					parentValue: result.category.parent.value,
+					id: category.id,
+					value: category.value,
+					parentId: category.parent.id,
+					parentValue: category.parent.value,
 				},
-				readTime: readingTime(result.content, { wordsPerMinute: 500 }).text,
+				readTime: readingTime(content, { wordsPerMinute: 500 }).text,
 			};
 		});
 
@@ -281,6 +323,7 @@ export class PostRepository extends Repository<Post> {
 		const [results, total] = await this.createQueryBuilder('post')
 			.innerJoinAndSelect('post.tags', 'tags')
 			.innerJoinAndSelect('post.category', 'category')
+			.leftJoinAndSelect('post.comments', 'comments')
 			.leftJoinAndSelect('category.parent', 'category.parent')
 			.where('tags.value = :value', { value: tagValue })
 			.orderBy('post.id', 'DESC')
@@ -289,7 +332,17 @@ export class PostRepository extends Repository<Post> {
 			.getManyAndCount();
 
 		const newResults = results.map((result) => {
-			const { id, title, tags, createdAt, isPrivate, comments, view } = result;
+			const {
+				id,
+				title,
+				tags,
+				content,
+				createdAt,
+				isPrivate,
+				comments,
+				view,
+				category,
+			} = result;
 
 			return {
 				id,
@@ -300,12 +353,12 @@ export class PostRepository extends Repository<Post> {
 				view,
 				commentLength: comments.length,
 				category: {
-					id: result.category.id,
-					value: result.category.value,
-					parentId: result.category.parent.id,
-					parentValue: result.category.parent.value,
+					id: category.id,
+					value: category.value,
+					parentId: category.parent.id,
+					parentValue: category.parent.value,
 				},
-				readTime: readingTime(result.content, { wordsPerMinute: 500 }).text,
+				readTime: readingTime(content, { wordsPerMinute: 500 }).text,
 			};
 		});
 

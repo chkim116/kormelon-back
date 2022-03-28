@@ -37,8 +37,6 @@ describe('search test', () => {
 		it('검색된 값에 따라 해당 하는 게시글을 가져온다.', async () => {
 			const res = await server.get(`/search?q=${encodeURIComponent('제')}`);
 
-			console.log(res.body);
-
 			expect(res.status).toBe(200);
 			expect(res.body.total).toBe(3);
 			expect(res.body.results.length).toBe(3);
