@@ -53,7 +53,7 @@ describe('User test', () => {
 			});
 
 			expect(err.status).toEqual(400);
-			expect(err.body.message).toEqual('이미 존재하는 유저 이름입니다.');
+			expect(err.body.message).toEqual('이미 존재하는 유저입니다.');
 		});
 	});
 
