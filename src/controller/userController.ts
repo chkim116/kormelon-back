@@ -1,4 +1,4 @@
-import { Request, Response } from 'express';
+import { CookieOptions, Request, Response } from 'express';
 import { validationResult } from 'express-validator';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
@@ -14,9 +14,16 @@ import { Notification } from '../model/entities/Notification';
 
 dotenv.config();
 
-function cookieOption() {
+const isProd = process.env.NODE_ENV === 'production';
+
+function cookieOption(): CookieOptions {
 	return {
-		maxAge: 60 * 60 * 1000 * 24 * 7,
+		maxAge: 1000 * 60 * 60 * 24 * 7,
+		path: '/',
+		domain: isProd ? '.kormelon.com' : undefined,
+		httpOnly: isProd,
+		secure: isProd,
+		sameSite: isProd ? 'none' : 'lax',
 	};
 }
 
