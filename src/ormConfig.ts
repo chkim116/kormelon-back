@@ -17,11 +17,11 @@ const connections: ConnectionOptions[] = [
 	{
 		type: 'mysql',
 		name: 'production',
-		host: process.env.DB_PROD_HOST,
-		port: Number(process.env.DB_PROD_PORT),
-		username: process.env.DB_PROD_USERNAME,
-		password: process.env.DB_PROD_PASSWORD,
-		database: process.env.DB_PROD_NAME,
+		host: process.env.RDS_HOSTNAME,
+		port: Number(process.env.RDS_PORT),
+		username: process.env.RDS_USERNAME,
+		password: process.env.RDS_PASSWORD,
+		database: process.env.RDS_DB_NAME,
 		// 최초 한번만 실행
 		synchronize: true,
 		...defaultConfig,
