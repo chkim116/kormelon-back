@@ -17,18 +17,15 @@ jobs:
             - node/install:
                   node-version: "16.13"
                   install-yarn: true
-            - node/with-cache:
-                  steps:
-                      - checkout
-                      - restore_cache:
-                            key: cache-live-{{ checksum "yarn.lock" }}
-                      - run: yarn install
-                      - run: mkdir -p ./logs
-                      - run: yarn build
-                      - save_cache:
-                            key: cache-live-{{ checksum "yarn.lock" }}
-                            paths:
-                                - ./node_modules
+            - restore_cache:
+                key: cache-live-{{ checksum "yarn.lock" }}
+            - run: yarn install
+            - run: mkdir -p ./logs
+            - run: yarn build
+            - save_cache:
+                key: cache-live-{{ checksum "yarn.lock" }}
+                paths:
+                    - ./node_modules
             - attach_workspace:
                   at: .
             - aws-ebcli/setup
