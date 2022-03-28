@@ -48,5 +48,5 @@ workflows:
                   filters:
                       branches:
                           only:
-                              - deploy
+                              - v2
                   context: kormelon
