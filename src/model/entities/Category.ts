@@ -23,11 +23,14 @@ export class Category {
 	})
 	posts!: Post[];
 
+	@Column()
+	parentId!: string;
+
 	@ManyToOne(
 		() => ParentCategory,
 		(parentCategory) => parentCategory.categories,
 		{ onDelete: 'CASCADE' }
 	)
-	@JoinColumn()
+	@JoinColumn({ name: 'parentId', referencedColumnName: 'id' })
 	parent!: ParentCategory;
 }

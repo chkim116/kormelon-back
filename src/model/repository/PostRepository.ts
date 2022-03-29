@@ -6,9 +6,10 @@ import {
 } from 'typeorm';
 import readingTime from 'reading-time';
 import gravatar from 'gravatar';
+import dayjs from 'dayjs';
 
 import { Post } from '../entities/Post';
-import dayjs from 'dayjs';
+import { parentCategoryRepository } from './CategoryRepository';
 
 export function postRepository() {
 	return getCustomRepository(PostRepository, process.env.NODE_ENV);
@@ -218,16 +219,25 @@ export class PostRepository extends Repository<Post> {
 		page: number = 1,
 		per: number = 10
 	) {
-		const [results, total] = await this.createQueryBuilder('post')
-			.innerJoinAndSelect('post.tags', 'tags')
-			.innerJoinAndSelect('post.category', 'category')
-			.leftJoinAndSelect('post.comments', 'comments')
-			.leftJoinAndSelect('category.parent', 'category.parent')
-			.where('category.parent.value = :value', { value: categoryValue })
-			.orderBy('post.id', 'DESC')
-			.skip((page - 1) * per)
-			.take(per)
-			.getManyAndCount();
+		// TODO: value말고 id로
+		const category = await parentCategoryRepository().findOne({
+			where: {
+				value: categoryValue,
+			},
+			select: ['id', 'value'],
+		});
+
+		const [results, total] = await postRepository().findAndCount({
+			where: {
+				category: {
+					parentId: category?.id,
+				},
+			},
+			relations: ['category', 'category.parent', 'tags', 'comments'],
+			order: { id: 'DESC' },
+			skip: (page - 1) * per,
+			take: per,
+		});
 
 		const newResults = results.map((result) => {
 			const {
@@ -271,16 +281,17 @@ export class PostRepository extends Repository<Post> {
 		page: number = 1,
 		per: number = 10
 	) {
-		const [results, total] = await this.createQueryBuilder('post')
-			.innerJoinAndSelect('post.tags', 'tags')
-			.innerJoinAndSelect('post.category', 'category')
-			.leftJoinAndSelect('post.comments', 'comments')
-			.leftJoinAndSelect('category.parent', 'category.parent')
-			.where('category.value = :value', { value: subCategoryValue })
-			.orderBy('post.id', 'DESC')
-			.skip((page - 1) * per)
-			.take(per)
-			.getManyAndCount();
+		const [results, total] = await postRepository().findAndCount({
+			where: {
+				category: {
+					value: subCategoryValue,
+				},
+			},
+			relations: ['category', 'category.parent', 'tags', 'comments'],
+			order: { id: 'DESC' },
+			skip: (page - 1) * per,
+			take: per,
+		});
 
 		const newResults = results.map((post) => {
 			const {
