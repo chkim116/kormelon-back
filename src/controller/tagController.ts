@@ -8,13 +8,15 @@ export const getTags = async (req: Request, res: Response) => {
 	try {
 		const tags = await tagRepository().find({ relations: ['posts'] });
 
-		const results = tags.map((tag) => {
-			return {
-				id: tag.id,
-				value: tag.value,
-				count: tag.posts.length,
-			};
-		});
+		const results = tags
+			.filter((tag) => tag.posts.length)
+			.map((tag) => {
+				return {
+					id: tag.id,
+					value: tag.value,
+					count: tag.posts.length,
+				};
+			});
 
 		res.status(200).send(results);
 	} catch (err) {
@@ -43,6 +45,7 @@ export const postTagsBySearch = async (req: Request, res: Response) => {
 		});
 
 		const results = tags
+			.filter((tag) => tag.posts.length)
 			.map((tag) => {
 				return {
 					id: tag.id,
