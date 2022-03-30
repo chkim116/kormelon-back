@@ -31,7 +31,7 @@ describe('Category test', () => {
 			expect(res.status).toBe(200);
 			expect(res.body.length).toBeTruthy();
 			expect(res.body[0].value).toBe('상위');
-			expect(res.body[0].categories[0].value).toBe('default');
+			expect(res.body[0].categories[0].value).toBe('상위의 기본');
 			expect(res.body[0].categories[0].posts).toEqual([]);
 		});
 	});
@@ -43,7 +43,7 @@ describe('Category test', () => {
 			const res = await server.get(`/category/${parent.body[0].id}`);
 			expect(res.status).toBe(200);
 			expect(res.body.length).toBeTruthy();
-			expect(res.body[0].value).toBe('default');
+			expect(res.body[0].value).toBe('상위의 기본');
 			expect(res.body[0].posts).toEqual([]);
 		});
 	});

@@ -21,10 +21,11 @@ export class ParentCategoryRepository extends Repository<ParentCategory> {
 
 		// 하위 카테고리를 기본적으로 생성합니다.
 		const category = categoryRepository().create({
-			value: 'default',
+			value: parentCategory.value + '의 기본',
 			parent: parentCategory,
 			posts: [],
 		});
+
 		await categoryRepository().save(category);
 	}
 
