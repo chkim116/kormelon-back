@@ -23,7 +23,7 @@ export class Post {
 	@Column()
 	title!: string;
 
-	@Column({ type: 'text' })
+	@Column({ type: 'longtext' })
 	content!: string;
 
 	@Column({ default: 0 })

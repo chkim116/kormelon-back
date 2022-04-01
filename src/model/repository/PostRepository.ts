@@ -103,7 +103,7 @@ export class PostRepository extends Repository<Post> {
 
 	async findPosts(page: number = 1, per: number = 10) {
 		const results = await this.find({
-			relations: ['category', 'category.parent', 'tags'],
+			relations: ['category', 'category.parent', 'tags', 'comments'],
 			order: { id: 'DESC' },
 			skip: (page - 1) * per,
 			take: per,
@@ -172,7 +172,7 @@ export class PostRepository extends Repository<Post> {
 			order: {
 				id: 'DESC',
 			},
-			relations: ['tags', 'category', 'category.parent'],
+			relations: ['tags', 'category', 'category.parent', 'comments'],
 			skip: (page - 1) * per,
 			take: per,
 		});
