@@ -22,13 +22,12 @@ mysql -u root -p
 # 비밀번호 보안 정책 수정
 set global validate_password_policy=LOW;
 
-# 유저확인
-select user, host from user;
-# 생성
+# 새로운 ID 생성
 create user USER_ID@localhost identified by 'PASSWORD_HERE'
 
-# DB 생성 
+# DB 생성
 CREATE DATABASE DB_NAME default CHARACTER SET UTF8;
+
 # 권한
 grant all privileges on DB_NAME.* to USER_ID@localhost;
 ```
